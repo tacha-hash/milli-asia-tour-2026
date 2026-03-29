@@ -1,0 +1,258 @@
+<!doctype html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>MILLI — JAA‑EHH ASIA TOUR 2026</title>
+    <meta name="description" content="MILLI JAA‑EHH ASIA TOUR 2026 — Hong Kong, Taipei, Singapore, Kuala Lumpur, Manila, Indonesia, Japan, China, Bangkok." />
+    <meta property="og:title" content="MILLI — JAA‑EHH ASIA TOUR 2026" />
+    <meta property="og:description" content="Premium cinematic landing with parallax and glassmorphism. Get tickets." />
+    <meta property="og:type" content="website" />
+    <meta name="theme-color" content="#FF0000" />
+
+    <!-- Fonts: premium-inspired (condensed + grotesk) -->
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Bebas+Neue&family=Space+Grotesk:wght@400;600;700&display=swap" rel="stylesheet">
+
+    <!-- Tailwind (CDN + JIT) -->
+    <script src="https://cdn.tailwindcss.com"></script>
+    <script>
+      window.tailwind = {
+        config: {
+          theme: {
+            extend: {
+              colors: { milliRed: '#FF0000' },
+              fontFamily: {
+                condensed: [ 'Bebas Neue', 'Oswald', 'Impact', 'Arial Narrow', 'system-ui', 'sans-serif' ],
+                grotesk: [ 'Space Grotesk', 'Inter', 'system-ui', 'sans-serif' ],
+              },
+              dropShadow: {
+                glow: '0 0 24px rgba(255,0,0,0.55)'
+              }
+            }
+          }
+        }
+      }
+    </script>
+
+    <!-- GSAP for smooth scroll + parallax -->
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/gsap/3.12.5/gsap.min.js" crossorigin></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/gsap/3.12.5/ScrollTrigger.min.js" crossorigin></script>
+
+    <style>
+      html { scroll-behavior: smooth; }
+      .grain { position: absolute; inset: -20%; pointer-events:none; opacity:.10; mix-blend-mode: overlay; background-image: url('data:image/svg+xml;utf8,\
+        <svg xmlns="http://www.w3.org/2000/svg" width="140" height="140" viewBox="0 0 140 140">\
+          <filter id="n"><feTurbulence type="fractalNoise" baseFrequency="0.8" numOctaves="3" stitchTiles="stitch"/></filter>\
+          <rect width="100%" height="100%" filter="url(%23n)" opacity="0.3"/>\
+        </svg>'); }
+      .vignette::after { content:''; position:absolute; inset:0; pointer-events:none; background: radial-gradient(ellipse at center, transparent 40%, rgba(0,0,0,.5) 100%);}
+      .letterbox { position: fixed; left:0; right:0; height: 80px; background:#000; z-index:40; pointer-events:none; opacity:.85;}
+      .glass { backdrop-filter: blur(10px); -webkit-backdrop-filter: blur(10px); }
+      .border-gradient { position: relative; }
+      .border-gradient::before { content:''; position:absolute; inset:-1px; border-radius: inherit; padding:1px; background: linear-gradient(135deg, rgba(255,255,255,.35), rgba(255,0,0,.35)); -webkit-mask: linear-gradient(#000 0 0) content-box, linear-gradient(#000 0 0); -webkit-mask-composite: xor; mask-composite: exclude; }
+    </style>
+  </head>
+  <body class="bg-black text-white font-grotesk selection:bg-milliRed selection:text-white">
+    <!-- Cinematic letterbox bars -->
+    <div id="barTop" class="letterbox top-0 origin-top scale-y-0"></div>
+    <div id="barBottom" class="letterbox bottom-0 origin-bottom scale-y-0"></div>
+
+    <div id="root"></div>
+
+    <!-- React (UMD) -->
+    <script crossorigin src="https://unpkg.com/react@18/umd/react.production.min.js"></script>
+    <script crossorigin src="https://unpkg.com/react-dom@18/umd/react-dom.production.min.js"></script>
+    <script src="https://unpkg.com/@babel/standalone/babel.min.js"></script>
+
+    <script type="text/babel">
+      const { useEffect, useRef } = React;
+
+      const ASSETS = {
+        KV: 'https://lh3.googleusercontent.com/d/1O01RuN39YZoxKRqYumS1OFJ7rzbl1aDn',
+        LOGO: 'https://lh3.googleusercontent.com/d/1Bu6B29MUjbjdAfrU5ONhpifjikvLS97F',
+        CUTOUT: 'https://lh3.googleusercontent.com/d/1XhHiSV1EeCzHYEDFN8eOQt2H6_ZiO4AA'
+      };
+
+      const DATES = [
+        { id: 1, date: 'June 26 (Fri)', city: 'Hong Kong', note: 'After Party', type: 'show', cta: 'Get Tickets' },
+        { id: 2, date: 'June 27 (Sat)', city: 'Travel Day', note: 'HK → Taipei + Taipei Pre‑Party', type: 'travel', cta: 'Info' },
+        { id: 3, date: 'June 28 (Sun)', city: 'Taipei', note: null, type: 'show', cta: 'Get Tickets' },
+        { id: 4, date: 'July 3 (Thu)', city: 'Hong Kong', note: 'After Party', type: 'option', cta: 'Join Waitlist' },
+        { id: 5, date: 'July 10 (Fri)', city: 'Singapore', note: 'After Party', type: 'show', cta: 'Get Tickets' },
+        { id: 6, date: 'July 11 (Sat)', city: 'Kuala Lumpur', note: 'After Party', type: 'show', cta: 'Get Tickets' },
+        { id: 7, date: 'July 17/18', city: 'Singapore / Kuala Lumpur', note: 'OPTION', type: 'option', cta: 'Join Waitlist' },
+        { id: 8, date: 'TBC (Jul–Sep)', city: 'Manila, Indonesia, Japan, China', note: null, type: 'tbc', cta: 'Notify Me' },
+        { id: 9, date: 'Oct 3', city: 'Bangkok', note: 'Samyan Mitrtown Hall (2,300 PAX) — HOMECOMING', type: 'homecoming', cta: 'Get Tickets' },
+      ];
+
+      const Badge = ({ type }) => {
+        const map = {
+          show: { label: 'SHOW', cls: 'bg-milliRed/90 text-white' },
+          travel: { label: 'TRAVEL', cls: 'bg-white/10 text-white border border-white/20' },
+          option: { label: 'OPTION', cls: 'bg-black/50 text-white border border-white/30' },
+          tbc: { label: 'TBC', cls: 'bg-black/50 text-white border border-dashed border-white/30' },
+          homecoming: { label: 'HOMECOMING', cls: 'bg-white text-black' },
+        };
+        const item = map[type] ?? map.show;
+        return (
+          <span className={`inline-block px-2 py-0.5 text-[11px] font-bold tracking-wider rounded-sm ${item.cls}`}>{item.label}</span>
+        );
+      };
+
+      const Hero = () => {
+        const heroRef = useRef(null);
+        const bgRef = useRef(null);
+        const cutoutRef = useRef(null);
+        const copyRef = useRef(null);
+
+        useEffect(() => {
+          if (!window.gsap) return;
+          const gsap = window.gsap; const ST = window.ScrollTrigger;
+          gsap.registerPlugin(ST);
+
+          // Intro timeline
+          const tl = gsap.timeline({ defaults: { ease: 'power2.out' } });
+          tl.from('#logo', { y: -40, opacity: 0, duration: .8 })
+            .from(copyRef.current, { y: 40, opacity: 0, duration: .8 }, '-=0.4')
+            .from(cutoutRef.current, { y: 40, opacity: 0, duration: .9 }, '-=0.6');
+
+          // Cinematic letterbox appears slightly after scroll
+          gsap.to('#barTop, #barBottom', { scaleY: 1, scrollTrigger: { trigger: heroRef.current, start: 'top top', end: '+=40%', scrub: true } });
+
+          // Parallax: background slower, cutout slightly faster
+          gsap.to(bgRef.current, { yPercent: 12, scale: 1.08, scrollTrigger: { trigger: heroRef.current, start: 'top top', end: 'bottom top', scrub: true } });
+          gsap.to(cutoutRef.current, { yPercent: -6, scrollTrigger: { trigger: heroRef.current, start: 'top bottom', end: 'bottom top', scrub: true } });
+          gsap.to(copyRef.current, { yPercent: -4, scrollTrigger: { trigger: heroRef.current, start: 'top bottom', end: 'bottom top', scrub: true } });
+
+          return () => { tl.kill(); ST.getAll().forEach(t => t.kill()); };
+        }, []);
+
+        return (
+          <section ref={heroRef} className="relative min-h-[100svh] w-full overflow-hidden vignette">
+            {/* Background image layer */}
+            <div ref={bgRef} className="absolute inset-0 will-change-transform">
+              <img src={ASSETS.KV} alt="MILLI KV" className="w-full h-full object-cover scale-105" />
+              <div className="absolute inset-0 bg-gradient-to-t from-black via-black/30 to-black/10"></div>
+              <div className="grain"></div>
+            </div>
+
+            {/* Header */}
+            <header className="relative z-20 px-6 md:px-10 py-6 flex items-center justify-between">
+              <img id="logo" src={ASSETS.LOGO} alt="MILLI Logo" className="h-10 md:h-12 drop-shadow-glow"/>
+              <a href="#dates" className="hidden md:inline-block px-5 py-2 bg-white/10 hover:bg-white/20 transition border border-white/20 rounded-full font-condensed tracking-widest uppercase">Tour Dates</a>
+            </header>
+
+            {/* Center copy */}
+            <div ref={copyRef} className="relative z-10 h-[70vh] md:h-[68vh] flex items-end md:items-center justify-center px-6 md:px-10">
+              <div className="text-center">
+                <h1 className="font-condensed text-[18vw] md:text-[12vw] leading-[0.85] uppercase tracking-tight">
+                  MILLI
+                </h1>
+                <p className="font-condensed text-[8vw] md:text-[5.5vw] leading-none uppercase -mt-2">Asia Tour 2026</p>
+                <div className="mt-6 md:mt-8 inline-flex gap-3">
+                  <a href="#dates" className="px-6 py-3 rounded-full bg-milliRed text-white font-condensed tracking-widest uppercase border border-white/10 shadow-[0_10px_30px_rgba(255,0,0,0.35)] hover:brightness-110">View Dates</a>
+                  <a href="#tickets" className="px-6 py-3 rounded-full bg-white/10 text-white font-condensed tracking-widest uppercase border border-white/20 hover:bg-white/20">Get Tickets</a>
+                </div>
+              </div>
+            </div>
+
+            {/* Foreground billboard cutout */}
+            <div className="absolute bottom-0 inset-x-0 z-10 flex items-end justify-center pointer-events-none">
+              <img ref={cutoutRef} src={ASSETS.CUTOUT} alt="MILLI Billboard" className="w-[92%] md:w-[70%] lg:w-[60%] max-w-[1100px] object-contain drop-shadow-[0_40px_80px_rgba(0,0,0,0.6)]"/>
+            </div>
+          </section>
+        );
+      };
+
+      const DateCard = ({ item }) => {
+        const isDisabled = item.type === 'travel';
+        const isOption = item.type === 'option' || item.type === 'tbc';
+        const isHomecoming = item.type === 'homecoming';
+
+        const bgTint = isHomecoming ? 'from-milliRed/20 via-milliRed/10 to-transparent' : 'from-white/10 via-white/5 to-transparent';
+        const pill = isOption ? 'bg-white/10 text-white border border-white/30 hover:bg-white/20' : (isDisabled ? 'bg-white/10 text-white/70 border border-white/20 cursor-not-allowed' : 'bg-milliRed text-white hover:brightness-110');
+
+        return (
+          <div className="group relative border-gradient rounded-2xl overflow-hidden">
+            <div className={`glass relative p-5 md:p-6 rounded-2xl bg-gradient-to-br ${bgTint}`}>
+              <div className="absolute inset-0 opacity-0 group-hover:opacity-100 transition-opacity duration-500 bg-[radial-gradient(100%_100%_at_50%_0%,rgba(255,255,255,0.12),transparent)]"></div>
+              <div className="flex items-start justify-between gap-4">
+                <div>
+                  <div className="flex items-center gap-2 mb-2">
+                    <Badge type={item.type} />
+                    {isHomecoming && <span className="text-xs uppercase tracking-wider text-white/80">Bangkok Special</span>}
+                  </div>
+                  <h3 className={`font-condensed text-3xl md:text-4xl leading-none ${isHomecoming ? 'text-white drop-shadow-glow' : 'text-white'}`}>{item.city}</h3>
+                  <p className="mt-1 text-white/80">{item.date}{item.note ? ` — ${item.note}` : ''}</p>
+                </div>
+                <div className="shrink-0 pt-1">
+                  {isDisabled ? (
+                    <button disabled className={`px-4 py-2 rounded-full text-sm font-condensed tracking-widest ${pill}`}>Info</button>
+                  ) : (
+                    <a href="#" className={`px-4 py-2 rounded-full text-sm font-condensed tracking-widest border ${pill}`}>{isOption ? 'Join Waitlist' : (item.cta || 'Get Tickets')}</a>
+                  )}
+                </div>
+              </div>
+            </div>
+          </div>
+        );
+      };
+
+      const TourGrid = () => {
+        const gridRef = useRef(null);
+        useEffect(() => {
+          if (!window.gsap) return; const gsap = window.gsap; const ST = window.ScrollTrigger; gsap.registerPlugin(ST);
+          gsap.from(gridRef.current.querySelectorAll('[data-card]'), {
+            opacity: 0, y: 40, stagger: 0.08, duration: 0.8, ease: 'power2.out',
+            scrollTrigger: { trigger: gridRef.current, start: 'top 85%' }
+          });
+        }, []);
+
+        return (
+          <section id="dates" className="relative py-20 md:py-28 bg-gradient-to-b from-black via-black to-[#0a0a0a]">
+            <div className="absolute inset-0 pointer-events-none opacity-[0.06]" style={{ backgroundImage: 'radial-gradient(circle at 20% 20%, #fff 1px, transparent 1px)', backgroundSize: '12px 12px' }}></div>
+            <div className="container mx-auto px-6 md:px-10 relative">
+              <div className="mb-10 md:mb-14 flex items-end justify-between">
+                <h2 className="font-condensed text-5xl md:text-6xl tracking-tight uppercase">Tour Dates</h2>
+                <p className="hidden md:block text-white/60 font-condensed tracking-wider uppercase">Glass cards • Parallax • Smooth</p>
+              </div>
+              <div ref={gridRef} className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-5 md:gap-6">
+                {DATES.map(item => (
+                  <div data-card key={item.id}><DateCard item={item} /></div>
+                ))}
+              </div>
+              <p className="mt-8 text-sm text-white/50">Schedule subject to change. Follow official channels for updates.</p>
+            </div>
+          </section>
+        );
+      };
+
+      const Footer = () => (
+        <footer className="bg-[#0a0a0a] text-white py-12">
+          <div className="container mx-auto px-6 md:px-10 flex flex-col md:flex-row items-center justify-between gap-6">
+            <p className="font-condensed text-2xl uppercase tracking-wide">MILLI — JAA‑EHH ASIA TOUR 2026</p>
+            <nav className="flex items-center gap-5 text-white/80">
+              <a href="#" className="hover:text-white underline underline-offset-4 decoration-milliRed/70">Instagram</a>
+              <a href="#" className="hover:text-white underline underline-offset-4 decoration-milliRed/70">Twitter</a>
+              <a href="#" className="hover:text-white underline underline-offset-4 decoration-milliRed/70">YouTube</a>
+            </nav>
+          </div>
+        </footer>
+      );
+
+      const App = () => (
+        <main className="min-h-screen font-grotesk">
+          <Hero />
+          <TourGrid />
+          <Footer />
+        </main>
+      );
+
+      const root = ReactDOM.createRoot(document.getElementById('root'));
+      root.render(<App />);
+    </script>
+  </body>
+  </html>
+

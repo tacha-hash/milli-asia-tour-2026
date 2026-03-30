@@ -202,16 +202,22 @@
         }, []);
 
         return (
-          <section id="city-scramble" className="bg-obsidian py-16 md:py-24">
-            <div className="flex items-center justify-center gap-3">
-              <span
-                ref={textRef}
-                className="font-body text-2xl font-bold uppercase tracking-[0.35em] text-white md:text-4xl lg:text-5xl"
-              >
-                {TOUR_CITIES[0]}
-              </span>
-              <span className="scramble-cursor"></span>
+          <section id="city-scramble" className="relative bg-obsidian py-20 md:py-32 border-y border-white/5">
+            {/* Subtle red accent lines */}
+            <div className="absolute top-0 left-1/2 -translate-x-1/2 w-12 h-[2px] bg-milliRed"></div>
+            <div className="text-center">
+              <p className="font-body text-[10px] uppercase tracking-[0.5em] text-silver mb-6">10 Countries — June to October</p>
+              <div className="flex items-center justify-center gap-3 min-h-[3.5rem]">
+                <span
+                  ref={textRef}
+                  className="font-body text-2xl font-bold uppercase tracking-[0.35em] text-white md:text-4xl lg:text-5xl"
+                >
+                  {TOUR_CITIES[0]}
+                </span>
+                <span className="scramble-cursor"></span>
+              </div>
             </div>
+            <div className="absolute bottom-0 left-1/2 -translate-x-1/2 w-12 h-[2px] bg-milliRed"></div>
           </section>
         );
       }
@@ -330,46 +336,48 @@
               </div>
 
               <div className="grid grid-cols-1 gap-8 md:grid-cols-2 lg:gap-12">
-                {/* Front */}
+                {/* Front — dark charcoal tee with small red logo */}
                 <div className="merch-card flex flex-col items-center">
                   <div className="merch-inner w-full max-w-[400px]">
-                    <div className="relative aspect-square rounded-xl bg-[#1A1A1A] p-8 flex items-center justify-center border border-white/5">
-                      <div className="relative w-48 h-56 bg-[#2A2A2A] rounded-t-3xl">
-                        <div className="absolute top-0 left-1/2 -translate-x-1/2 w-12 h-4 bg-[#1A1A1A] rounded-b-full"></div>
-                        <div className="absolute top-4 -left-6 w-10 h-16 bg-[#2A2A2A] rounded-l-lg -rotate-12"></div>
-                        <div className="absolute top-4 -right-6 w-10 h-16 bg-[#2A2A2A] rounded-r-lg rotate-12"></div>
-                        <div className="absolute top-12 left-1/2 -translate-x-1/2">
-                          <div className="bg-milliRed px-3 py-1 font-headline text-[8px] uppercase tracking-wider text-white">
-                            JAA EHH!
-                          </div>
-                        </div>
-                      </div>
+                    <div className="relative aspect-[3/4] rounded-xl bg-[#111] flex items-center justify-center border border-white/5 overflow-hidden">
+                      {/* T-shirt silhouette */}
+                      <svg viewBox="0 0 200 240" className="w-[70%] h-auto">
+                        <path d="M40,35 L20,60 L35,65 L35,220 C35,225 40,230 45,230 L155,230 C160,230 165,225 165,220 L165,65 L180,60 L160,35 L130,45 C125,48 115,50 100,50 C85,50 75,48 70,45 Z" fill="#2A2A2A" stroke="#333" strokeWidth="0.5"/>
+                        {/* Small red logo on chest */}
+                        <rect x="80" y="80" width="40" height="14" rx="2" fill="#DA2D40"/>
+                        <text x="100" y="90" textAnchor="middle" fill="white" fontSize="6" fontWeight="bold" fontFamily="sans-serif">JAA EHH!</text>
+                      </svg>
                     </div>
                   </div>
                   <p className="mt-4 font-body text-xs uppercase tracking-[0.3em] text-silver">Front</p>
                 </div>
 
-                {/* Back */}
+                {/* Back — KV full print + city list */}
                 <div className="merch-card flex flex-col items-center">
                   <div className="merch-inner w-full max-w-[400px]">
-                    <div className="relative aspect-square rounded-xl bg-[#1A1A1A] p-8 flex items-center justify-center border border-white/5">
-                      <div className="relative w-48 h-56 bg-[#2A2A2A] rounded-t-3xl overflow-hidden">
-                        <div className="absolute top-4 -left-6 w-10 h-16 bg-[#2A2A2A] rounded-l-lg -rotate-12"></div>
-                        <div className="absolute top-4 -right-6 w-10 h-16 bg-[#2A2A2A] rounded-r-lg rotate-12"></div>
-                        <div className="hero-kv absolute top-6 left-3 right-3 h-20 rounded"></div>
-                        <div className="absolute top-28 left-1/2 -translate-x-1/2 text-center">
-                          <div className="bg-milliRed px-2 py-0.5 font-headline text-[7px] uppercase text-white">
-                            JAA EHH! ASIA TOUR 2026
-                          </div>
-                        </div>
-                        <div className="absolute top-36 left-1/2 -translate-x-1/2 text-center">
-                          {TOUR_CITIES.map((city) => (
-                            <p key={city} className="font-body text-[5px] uppercase tracking-[0.15em] text-white/70 leading-tight">
-                              {city}
-                            </p>
-                          ))}
-                        </div>
-                      </div>
+                    <div className="relative aspect-[3/4] rounded-xl bg-[#111] flex items-center justify-center border border-white/5 overflow-hidden">
+                      <svg viewBox="0 0 200 240" className="w-[70%] h-auto">
+                        <defs>
+                          <clipPath id="tee-back">
+                            <path d="M40,35 L20,60 L35,65 L35,220 C35,225 40,230 45,230 L155,230 C160,230 165,225 165,220 L165,65 L180,60 L160,35 L130,45 C125,48 115,50 100,50 C85,50 75,48 70,45 Z"/>
+                          </clipPath>
+                        </defs>
+                        {/* Tee shape */}
+                        <path d="M40,35 L20,60 L35,65 L35,220 C35,225 40,230 45,230 L155,230 C160,230 165,225 165,220 L165,65 L180,60 L160,35 L130,45 C125,48 115,50 100,50 C85,50 75,48 70,45 Z" fill="#2A2A2A" stroke="#333" strokeWidth="0.5"/>
+                        {/* KV print area */}
+                        <image href="https://lh3.googleusercontent.com/d/1O01RuN39YZoxKRqYumS1OFJ7rzbl1aDn" x="50" y="55" width="100" height="75" clipPath="url(#tee-back)" preserveAspectRatio="xMidYMid slice"/>
+                        {/* Tour title */}
+                        <rect x="60" y="135" width="80" height="12" rx="1" fill="#DA2D40"/>
+                        <text x="100" y="144" textAnchor="middle" fill="white" fontSize="5.5" fontWeight="bold" fontFamily="sans-serif">JAA EHH! ASIA TOUR 2026</text>
+                        {/* City list */}
+                        {TOUR_CITIES.map((city, i) => (
+                          <text key={city} x="100" y={156 + i * 7} textAnchor="middle" fill="rgba(255,255,255,0.7)" fontSize="4" fontFamily="sans-serif" letterSpacing="1.5">
+                            {city}
+                          </text>
+                        ))}
+                        {/* YUPP footer */}
+                        <text x="100" y="230" textAnchor="middle" fill="rgba(255,255,255,0.3)" fontSize="3.5" fontFamily="sans-serif">YUPP! ENTERTAINMENT</text>
+                      </svg>
                     </div>
                   </div>
                   <p className="mt-4 font-body text-xs uppercase tracking-[0.3em] text-silver">Back</p>

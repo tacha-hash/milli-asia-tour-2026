@@ -4,18 +4,16 @@
     <meta charset="UTF-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
     <title>MILLI — JAA-EHH ASIA TOUR 2026</title>
-    <meta
-      name="description"
-      content="MILLI JAA-EHH ASIA TOUR 2026 — full-screen artwork, minimal tour dates, and clean footer."
-    />
+    <meta name="description" content="MILLI JAA-EHH ASIA TOUR 2026 — full-screen artwork, minimal tour dates, and clean footer." />
     <meta property="og:title" content="MILLI — JAA-EHH ASIA TOUR 2026" />
     <meta property="og:description" content="Full-screen hero artwork with a minimal tour date list." />
     <meta property="og:type" content="website" />
     <meta name="theme-color" content="#DA2D40" />
 
+    <!-- Fonts: Kuunari + Gotham (local), fallback to Space Grotesk + Inter -->
     <link rel="preconnect" href="https://fonts.googleapis.com" />
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
-    <link href="https://fonts.googleapis.com/css2?family=IBM+Plex+Mono:wght@400;500;600&display=swap" rel="stylesheet" />
+    <link href="https://fonts.googleapis.com/css2?family=Space+Grotesk:wght@500;700&family=Inter:wght@400;500;700&family=IBM+Plex+Mono:wght@400;500;600&display=swap" rel="stylesheet" />
 
     <script src="https://cdn.tailwindcss.com"></script>
     <script>
@@ -29,7 +27,9 @@
                 silver: '#A0A0A0'
               },
               fontFamily: {
-                mono: ['IBM Plex Mono', 'ui-monospace', 'SFMono-Regular', 'monospace']
+                headline: ['Kuunari', 'Space Grotesk', 'sans-serif'],
+                body: ['Gotham', 'Inter', 'sans-serif'],
+                mono: ['IBM Plex Mono', 'ui-monospace', 'monospace']
               }
             }
           }
@@ -44,25 +44,25 @@
     <script src="https://cdnjs.cloudflare.com/ajax/libs/gsap/3.12.5/ScrollTrigger.min.js" crossorigin></script>
 
     <style>
-      :root {
-        color-scheme: dark;
-      }
+      /* Custom fonts (local files if available) */
+      @font-face { font-family: 'Kuunari'; src: url('fonts/kuunari-black-condensed.otf') format('opentype'); font-display: swap; }
+      @font-face { font-family: 'Gotham'; src: url('fonts/Gotham-Bold.otf') format('opentype'); font-display: swap; }
 
-      html {
-        scroll-behavior: smooth;
-        background: #0a0a0a;
-      }
+      :root { color-scheme: dark; }
+      html { scroll-behavior: smooth; background: #0a0a0a; }
+      body { margin: 0; background: #0a0a0a; }
 
-      body {
-        margin: 0;
-        background: #0a0a0a;
-      }
-
-      /* Hero KV full-screen */
       .hero-kv {
         background-image: url('https://lh3.googleusercontent.com/d/1O01RuN39YZoxKRqYumS1OFJ7rzbl1aDn');
         background-size: cover;
         background-position: center;
+      }
+
+      .billboard-img {
+        background-image: url('https://lh3.googleusercontent.com/d/1XhHiSV1EeCzHYEDFN8eOQt2H6_ZiO4AA');
+        background-size: contain;
+        background-position: center;
+        background-repeat: no-repeat;
       }
 
       .row-divider::after {
@@ -73,54 +73,30 @@
         background: rgba(255, 255, 255, 0.12);
       }
 
-      /* City scramble auto-play glow */
-      .city-auto-active {
-        color: #DA2D40;
-        text-shadow: 0 0 20px rgba(218, 45, 64, 0.4);
-        transition: color 0.3s, text-shadow 0.3s;
-      }
+      .billboard-container { perspective: 1000px; }
+      .billboard-card { transform-style: preserve-3d; backface-visibility: hidden; }
 
-      /* Billboard 3D perspective */
-      .billboard-container {
-        perspective: 1200px;
-      }
-      .billboard-card {
-        transform-style: preserve-3d;
-        backface-visibility: hidden;
-      }
+      .merch-card { perspective: 800px; }
+      .merch-card:hover .merch-inner { transform: rotateY(8deg) rotateX(-3deg); }
+      .merch-inner { transition: transform 0.5s ease; transform-style: preserve-3d; }
 
-      /* Merch hover rotate */
-      .merch-card {
-        perspective: 800px;
-      }
-      .merch-card:hover .merch-inner {
-        transform: rotateY(8deg) rotateX(-3deg);
-      }
-      .merch-inner {
-        transition: transform 0.5s ease;
-        transform-style: preserve-3d;
-      }
-
-      /* Scramble cursor */
       .scramble-cursor {
         display: inline-block;
         width: 2px;
         height: 1.1em;
-        background: #DA2D40;
-        margin-left: 2px;
+        background: #fff;
+        margin-left: 3px;
         animation: blink 0.7s step-end infinite;
         vertical-align: text-bottom;
       }
-      @keyframes blink {
-        50% { opacity: 0; }
-      }
+      @keyframes blink { 50% { opacity: 0; } }
     </style>
   </head>
-  <body class="bg-obsidian font-mono text-white selection:bg-milliRed selection:text-white">
+  <body class="bg-obsidian text-white selection:bg-milliRed selection:text-white">
     <div id="root"></div>
 
     <script type="text/babel">
-      const { useEffect, useRef, useState, useCallback } = React;
+      const { useEffect, useRef, useState } = React;
 
       /* ─── DATA ─── */
       const TOUR_DATES = [
@@ -148,8 +124,8 @@
         HOMECOMING: 'border-milliRed text-milliRed'
       };
 
-      /* ─── SCRAMBLE TEXT UTILITY ─── */
-      function scrambleText(node, finalText, duration = 0.55) {
+      /* ─── SCRAMBLE UTILITY ─── */
+      function scrambleText(node, finalText, duration = 0.5) {
         if (!node || !window.gsap) return;
         const state = { frame: 0 };
         const glyphs = 'ABCDEFGHIJKLMNOPQRSTUVWXYZ0123456789';
@@ -173,49 +149,17 @@
         });
       }
 
-      /* ─── AUTO CITY SCRAMBLE ─── */
-      function CityScrambleAuto() {
-        const textRef = useRef(null);
-        const [currentIdx, setCurrentIdx] = useState(0);
-
-        useEffect(() => {
-          let idx = 0;
-          const run = () => {
-            if (textRef.current) {
-              scrambleText(textRef.current, TOUR_CITIES[idx], 0.7);
-            }
-            setCurrentIdx(idx);
-            idx = (idx + 1) % TOUR_CITIES.length;
-          };
-          run();
-          const interval = setInterval(run, 2400);
-          return () => clearInterval(interval);
-        }, []);
-
-        return (
-          <div className="flex items-center justify-center gap-2">
-            <span
-              ref={textRef}
-              className="text-xl font-semibold uppercase tracking-[0.3em] text-milliRed md:text-3xl"
-            >
-              {TOUR_CITIES[0]}
-            </span>
-            <span className="scramble-cursor"></span>
-          </div>
-        );
-      }
-
-      /* ─── HERO — KV FULL SCREEN ─── */
+      /* ─── SECTION 1: HERO (100vh) — KV เต็มจอ ไม่ซ้อน text ─── */
       function Hero() {
         const heroRef = useRef(null);
 
         useEffect(() => {
           if (!window.gsap || !heroRef.current) return;
           const el = heroRef.current;
-          const handleMove = (event) => {
+          const handleMove = (e) => {
             const rect = el.getBoundingClientRect();
-            const x = (event.clientX - rect.left) / rect.width - 0.5;
-            const y = (event.clientY - rect.top) / rect.height - 0.5;
+            const x = (e.clientX - rect.left) / rect.width - 0.5;
+            const y = (e.clientY - rect.top) / rect.height - 0.5;
             window.gsap.to(el, {
               backgroundPosition: `${50 + x * 3}% ${50 + y * 3}%`,
               duration: 1,
@@ -227,22 +171,12 @@
         }, []);
 
         return (
-          <section className="relative min-h-screen border-b border-white/10 bg-milliRed overflow-hidden">
-            {/* Full-screen KV */}
+          <section className="relative h-screen overflow-hidden">
             <div ref={heroRef} className="hero-kv absolute inset-0"></div>
-
-            {/* Bottom gradient */}
-            <div className="absolute inset-x-0 bottom-0 h-40 bg-gradient-to-t from-obsidian via-obsidian/60 to-transparent"></div>
-
-            {/* Auto-scramble city names over hero */}
-            <div className="absolute inset-x-0 bottom-20 z-10">
-              <CityScrambleAuto />
-            </div>
-
-            {/* Scroll CTA */}
+            <div className="absolute inset-x-0 bottom-0 h-32 bg-gradient-to-t from-obsidian to-transparent"></div>
             <a
-              href="#billboard"
-              className="absolute bottom-6 left-1/2 z-10 -translate-x-1/2 border border-white/15 bg-black/20 px-4 py-2 text-[11px] uppercase tracking-[0.28em] text-white backdrop-blur-sm transition hover:border-white/40 hover:bg-black/40"
+              href="#city-scramble"
+              className="absolute bottom-6 left-1/2 z-10 -translate-x-1/2 border border-white/15 bg-black/20 px-4 py-2 font-body text-[11px] uppercase tracking-[0.28em] text-white backdrop-blur-sm transition hover:border-white/40 hover:bg-black/40"
             >
               Tour Dates
             </a>
@@ -250,7 +184,39 @@
         );
       }
 
-      /* ─── BILLBOARD 3D TRANSITION ─── */
+      /* ─── SECTION 2: CITY SCRAMBLE (auto-play, white on black) ─── */
+      function CityScramble() {
+        const textRef = useRef(null);
+
+        useEffect(() => {
+          let idx = 0;
+          const run = () => {
+            if (textRef.current) {
+              scrambleText(textRef.current, TOUR_CITIES[idx], 0.5);
+            }
+            idx = (idx + 1) % TOUR_CITIES.length;
+          };
+          run();
+          const interval = setInterval(run, 2500); // 2s display + 0.5s scramble
+          return () => clearInterval(interval);
+        }, []);
+
+        return (
+          <section id="city-scramble" className="bg-obsidian py-16 md:py-24">
+            <div className="flex items-center justify-center gap-3">
+              <span
+                ref={textRef}
+                className="font-body text-2xl font-bold uppercase tracking-[0.35em] text-white md:text-4xl lg:text-5xl"
+              >
+                {TOUR_CITIES[0]}
+              </span>
+              <span className="scramble-cursor"></span>
+            </div>
+          </section>
+        );
+      }
+
+      /* ─── SECTION 3: BILLBOARD 3D TRANSITION ─── */
       function Billboard() {
         const cardRef = useRef(null);
 
@@ -260,19 +226,9 @@
 
           window.gsap.fromTo(
             cardRef.current,
+            { rotateX: 10, scale: 0.8, opacity: 0, y: 60 },
             {
-              rotateX: 25,
-              rotateY: -8,
-              scale: 0.85,
-              opacity: 0,
-              y: 80,
-            },
-            {
-              rotateX: 0,
-              rotateY: 0,
-              scale: 1,
-              opacity: 1,
-              y: 0,
+              rotateX: 0, scale: 1, opacity: 1, y: 0,
               duration: 1.2,
               ease: 'power3.out',
               scrollTrigger: {
@@ -286,26 +242,18 @@
         }, []);
 
         return (
-          <section id="billboard" className="billboard-container bg-obsidian px-5 py-16 sm:px-8 lg:px-12 lg:py-24">
+          <section className="billboard-container bg-obsidian px-5 py-12 sm:px-8 lg:px-12 lg:py-20">
             <div className="mx-auto max-w-[900px]">
               <div ref={cardRef} className="billboard-card">
-                {/* Billboard frame — mimics the KV poster in 3D */}
-                <div className="relative overflow-hidden rounded-lg border-2 border-white/10 bg-milliRed shadow-2xl shadow-milliRed/20">
-                  <div className="hero-kv aspect-[16/9] w-full"></div>
-                  {/* Overlay text */}
-                  <div className="absolute inset-0 flex flex-col items-center justify-end bg-gradient-to-t from-black/60 via-transparent to-transparent p-6 pb-8">
-                    <p className="text-xs uppercase tracking-[0.4em] text-white/60">June — October 2026</p>
-                    <p className="mt-1 text-sm uppercase tracking-[0.3em] text-white/80">10 Countries across Asia</p>
-                  </div>
-                </div>
+                <div className="billboard-img aspect-[4/5] w-full rounded-lg md:aspect-[16/9]"></div>
               </div>
             </div>
           </section>
         );
       }
 
-      /* ─── TOUR ROW ─── */
-      function TourRow({ item, isAutoActive }) {
+      /* ─── SECTION 4: TOUR DATES (existing, font updated) ─── */
+      function TourRow({ item }) {
         const cityRef = useRef(null);
         const handleEnter = () => scrambleText(cityRef.current, item.city);
 
@@ -315,25 +263,22 @@
             onMouseEnter={handleEnter}
             onFocus={handleEnter}
           >
-            <div className="px-5 text-xs uppercase tracking-[0.24em] text-silver transition-colors duration-300 group-hover:text-black/70 md:px-6">
+            <div className="px-5 font-body text-xs uppercase tracking-[0.24em] text-silver transition-colors duration-300 group-hover:text-black/70 md:px-6">
               {item.date}
             </div>
-            <div ref={cityRef} className={`px-5 text-lg font-medium uppercase tracking-[0.16em] md:px-0 md:text-2xl ${isAutoActive ? 'city-auto-active' : ''}`}>
+            <div ref={cityRef} className="px-5 font-body text-lg font-bold uppercase tracking-[0.16em] md:px-0 md:text-2xl">
               {item.city}
             </div>
             <div className="px-5 md:px-0">
               <span className={[
-                'inline-flex items-center rounded-full border px-3 py-1 text-[11px] uppercase tracking-[0.24em]',
+                'inline-flex items-center rounded-full border px-3 py-1 font-body text-[11px] uppercase tracking-[0.24em]',
                 badgeClassMap[item.badge]
               ].join(' ')}>
                 {item.badge}
               </span>
             </div>
             <div className="px-5 md:px-6 md:text-right">
-              <a
-                href="#"
-                className="inline-flex items-center justify-center border border-white/15 px-4 py-2 text-[11px] uppercase tracking-[0.26em] transition-colors duration-300 group-hover:border-black/20 group-hover:text-black"
-              >
+              <a href="#" className="inline-flex items-center justify-center border border-white/15 px-4 py-2 font-body text-[11px] uppercase tracking-[0.26em] transition-colors duration-300 group-hover:border-black/20 group-hover:text-black">
                 {item.cta}
               </a>
             </div>
@@ -341,12 +286,11 @@
         );
       }
 
-      /* ─── TOUR SECTION ─── */
       function TourSection() {
         return (
           <section id="tour-dates" className="bg-obsidian px-5 py-14 sm:px-8 lg:px-12 lg:py-20">
             <div className="mx-auto max-w-[1280px] border border-white/10">
-              <div className="border-b border-white/10 px-5 py-5 text-xs uppercase tracking-[0.32em] text-silver md:px-6">
+              <div className="border-b border-white/10 px-5 py-5 font-body text-xs uppercase tracking-[0.32em] text-silver md:px-6">
                 Tour Dates
               </div>
               <div>
@@ -359,7 +303,7 @@
         );
       }
 
-      /* ─── MERCHANDISE SECTION ─── */
+      /* ─── SECTION 5: MERCHANDISE (dark bg, CI p.7) ─── */
       function MerchSection() {
         const sectionRef = useRef(null);
 
@@ -370,25 +314,19 @@
             window.gsap.fromTo(card,
               { opacity: 0, y: 60 },
               {
-                opacity: 1, y: 0,
-                duration: 0.8,
-                delay: i * 0.15,
-                ease: 'power3.out',
-                scrollTrigger: {
-                  trigger: card,
-                  start: 'top 85%',
-                },
+                opacity: 1, y: 0, duration: 0.8, delay: i * 0.15, ease: 'power3.out',
+                scrollTrigger: { trigger: card, start: 'top 85%' },
               }
             );
           });
         }, []);
 
         return (
-          <section ref={sectionRef} className="bg-obsidian px-5 py-16 sm:px-8 lg:px-12 lg:py-24">
+          <section ref={sectionRef} className="bg-black px-5 py-16 sm:px-8 lg:px-12 lg:py-24">
             <div className="mx-auto max-w-[1280px]">
               <div className="mb-10 text-center">
-                <p className="text-xs uppercase tracking-[0.4em] text-silver">Official Tour</p>
-                <h2 className="mt-2 text-2xl font-semibold uppercase tracking-[0.2em] md:text-4xl">Merchandise</h2>
+                <p className="font-body text-xs uppercase tracking-[0.4em] text-silver">Official Tour</p>
+                <h2 className="mt-2 font-headline text-3xl uppercase md:text-5xl">Merchandise</h2>
               </div>
 
               <div className="grid grid-cols-1 gap-8 md:grid-cols-2 lg:gap-12">
@@ -396,46 +334,37 @@
                 <div className="merch-card flex flex-col items-center">
                   <div className="merch-inner w-full max-w-[400px]">
                     <div className="relative aspect-square rounded-xl bg-[#1A1A1A] p-8 flex items-center justify-center border border-white/5">
-                      {/* T-shirt front mockup */}
                       <div className="relative w-48 h-56 bg-[#2A2A2A] rounded-t-3xl">
-                        {/* Collar */}
                         <div className="absolute top-0 left-1/2 -translate-x-1/2 w-12 h-4 bg-[#1A1A1A] rounded-b-full"></div>
-                        {/* Sleeves */}
                         <div className="absolute top-4 -left-6 w-10 h-16 bg-[#2A2A2A] rounded-l-lg -rotate-12"></div>
                         <div className="absolute top-4 -right-6 w-10 h-16 bg-[#2A2A2A] rounded-r-lg rotate-12"></div>
-                        {/* Small red logo */}
                         <div className="absolute top-12 left-1/2 -translate-x-1/2">
-                          <div className="bg-milliRed px-3 py-1 text-[8px] font-bold uppercase tracking-wider text-white">
+                          <div className="bg-milliRed px-3 py-1 font-headline text-[8px] uppercase tracking-wider text-white">
                             JAA EHH!
                           </div>
                         </div>
                       </div>
                     </div>
                   </div>
-                  <p className="mt-4 text-xs uppercase tracking-[0.3em] text-silver">Front</p>
+                  <p className="mt-4 font-body text-xs uppercase tracking-[0.3em] text-silver">Front</p>
                 </div>
 
                 {/* Back */}
                 <div className="merch-card flex flex-col items-center">
                   <div className="merch-inner w-full max-w-[400px]">
                     <div className="relative aspect-square rounded-xl bg-[#1A1A1A] p-8 flex items-center justify-center border border-white/5">
-                      {/* T-shirt back mockup */}
                       <div className="relative w-48 h-56 bg-[#2A2A2A] rounded-t-3xl overflow-hidden">
-                        {/* Sleeves */}
                         <div className="absolute top-4 -left-6 w-10 h-16 bg-[#2A2A2A] rounded-l-lg -rotate-12"></div>
                         <div className="absolute top-4 -right-6 w-10 h-16 bg-[#2A2A2A] rounded-r-lg rotate-12"></div>
-                        {/* KV graphic */}
-                        <div className="hero-kv absolute top-6 left-3 right-3 h-20 rounded bg-milliRed"></div>
-                        {/* Tour logo */}
+                        <div className="hero-kv absolute top-6 left-3 right-3 h-20 rounded"></div>
                         <div className="absolute top-28 left-1/2 -translate-x-1/2 text-center">
-                          <div className="bg-milliRed px-2 py-0.5 text-[7px] font-bold uppercase text-white">
+                          <div className="bg-milliRed px-2 py-0.5 font-headline text-[7px] uppercase text-white">
                             JAA EHH! ASIA TOUR 2026
                           </div>
                         </div>
-                        {/* City list */}
                         <div className="absolute top-36 left-1/2 -translate-x-1/2 text-center">
                           {TOUR_CITIES.map((city) => (
-                            <p key={city} className="text-[5px] uppercase tracking-[0.15em] text-white/70 leading-tight">
+                            <p key={city} className="font-body text-[5px] uppercase tracking-[0.15em] text-white/70 leading-tight">
                               {city}
                             </p>
                           ))}
@@ -443,21 +372,28 @@
                       </div>
                     </div>
                   </div>
-                  <p className="mt-4 text-xs uppercase tracking-[0.3em] text-silver">Back</p>
+                  <p className="mt-4 font-body text-xs uppercase tracking-[0.3em] text-silver">Back</p>
                 </div>
+              </div>
+
+              {/* Pre-order CTA */}
+              <div className="mt-12 text-center">
+                <a href="#" className="inline-flex items-center justify-center border-2 border-milliRed px-8 py-3 font-body text-sm font-bold uppercase tracking-[0.3em] text-milliRed transition-colors hover:bg-milliRed hover:text-white">
+                  Pre-Order
+                </a>
               </div>
             </div>
           </section>
         );
       }
 
-      /* ─── FOOTER ─── */
+      /* ─── SECTION 6: FOOTER ─── */
       function Footer() {
         return (
-          <footer className="border-t border-white/10 bg-obsidian px-5 py-6 text-[11px] uppercase tracking-[0.24em] text-silver sm:px-8 lg:px-12">
-            <div className="mx-auto flex max-w-[1280px] flex-col gap-3 sm:flex-row sm:items-center sm:justify-between">
-              <p>MILLI — JAA-EHH ASIA TOUR 2026</p>
-              <p>&copy; YUPP! Entertainment</p>
+          <footer className="border-t border-white/10 bg-obsidian px-5 py-6 sm:px-8 lg:px-12">
+            <div className="mx-auto flex max-w-[1280px] flex-col items-center gap-3 sm:flex-row sm:justify-between">
+              <img src="https://lh3.googleusercontent.com/d/1Bu6B29MUjbjdAfrU5ONhpifjikvLS97F" alt="YUPP!" className="h-6 invert" />
+              <p className="font-body text-[11px] uppercase tracking-[0.24em] text-silver">&copy; YUPP! Entertainment</p>
             </div>
           </footer>
         );
@@ -468,6 +404,7 @@
         return (
           <main>
             <Hero />
+            <CityScramble />
             <Billboard />
             <TourSection />
             <MerchSection />

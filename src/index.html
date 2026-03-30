@@ -11,7 +11,7 @@
     <meta property="og:title" content="MILLI — JAA-EHH ASIA TOUR 2026" />
     <meta property="og:description" content="Full-screen hero artwork with a minimal tour date list." />
     <meta property="og:type" content="website" />
-    <meta name="theme-color" content="#0A0A0A" />
+    <meta name="theme-color" content="#DA2D40" />
 
     <link rel="preconnect" href="https://fonts.googleapis.com" />
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
@@ -41,6 +41,7 @@
     <script src="https://unpkg.com/react-dom@18/umd/react-dom.production.min.js" crossorigin></script>
     <script src="https://unpkg.com/@babel/standalone/babel.min.js"></script>
     <script src="https://cdnjs.cloudflare.com/ajax/libs/gsap/3.12.5/gsap.min.js" crossorigin></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/gsap/3.12.5/ScrollTrigger.min.js" crossorigin></script>
 
     <style>
       :root {
@@ -57,7 +58,8 @@
         background: #0a0a0a;
       }
 
-      .hero-image {
+      /* Hero KV full-screen */
+      .hero-kv {
         background-image: url('https://lh3.googleusercontent.com/d/1O01RuN39YZoxKRqYumS1OFJ7rzbl1aDn');
         background-size: cover;
         background-position: center;
@@ -70,14 +72,57 @@
         height: 1px;
         background: rgba(255, 255, 255, 0.12);
       }
+
+      /* City scramble auto-play glow */
+      .city-auto-active {
+        color: #DA2D40;
+        text-shadow: 0 0 20px rgba(218, 45, 64, 0.4);
+        transition: color 0.3s, text-shadow 0.3s;
+      }
+
+      /* Billboard 3D perspective */
+      .billboard-container {
+        perspective: 1200px;
+      }
+      .billboard-card {
+        transform-style: preserve-3d;
+        backface-visibility: hidden;
+      }
+
+      /* Merch hover rotate */
+      .merch-card {
+        perspective: 800px;
+      }
+      .merch-card:hover .merch-inner {
+        transform: rotateY(8deg) rotateX(-3deg);
+      }
+      .merch-inner {
+        transition: transform 0.5s ease;
+        transform-style: preserve-3d;
+      }
+
+      /* Scramble cursor */
+      .scramble-cursor {
+        display: inline-block;
+        width: 2px;
+        height: 1.1em;
+        background: #DA2D40;
+        margin-left: 2px;
+        animation: blink 0.7s step-end infinite;
+        vertical-align: text-bottom;
+      }
+      @keyframes blink {
+        50% { opacity: 0; }
+      }
     </style>
   </head>
   <body class="bg-obsidian font-mono text-white selection:bg-milliRed selection:text-white">
     <div id="root"></div>
 
     <script type="text/babel">
-      const { useEffect, useRef } = React;
+      const { useEffect, useRef, useState, useCallback } = React;
 
+      /* ─── DATA ─── */
       const TOUR_DATES = [
         { id: 1, date: '26 JUN 2026', city: 'HONG KONG', badge: 'SHOW', cta: 'TICKETS' },
         { id: 2, date: '27 JUN 2026', city: 'TRAVEL DAY', badge: 'TRAVEL', cta: 'INFO' },
@@ -90,6 +135,11 @@
         { id: 9, date: '03 OCT 2026', city: 'BANGKOK', badge: 'HOMECOMING', cta: 'TICKETS' }
       ];
 
+      const TOUR_CITIES = [
+        'TAIWAN', 'HONG KONG', 'SINGAPORE', 'MALAYSIA', 'JAPAN',
+        'PHILIPPINES', 'INDONESIA', 'CHINA', 'THAILAND', 'SOUTH KOREA'
+      ];
+
       const badgeClassMap = {
         SHOW: 'border-white/15 text-white',
         TRAVEL: 'border-white/15 text-silver',
@@ -98,35 +148,165 @@
         HOMECOMING: 'border-milliRed text-milliRed'
       };
 
-      function scrambleText(node, finalText) {
+      /* ─── SCRAMBLE TEXT UTILITY ─── */
+      function scrambleText(node, finalText, duration = 0.55) {
         if (!node || !window.gsap) return;
         const state = { frame: 0 };
         const glyphs = 'ABCDEFGHIJKLMNOPQRSTUVWXYZ0123456789';
         window.gsap.killTweensOf(state);
         window.gsap.to(state, {
           frame: finalText.length * 2,
-          duration: 0.55,
+          duration,
           ease: 'power4.out',
           onUpdate: () => {
             const reveal = Math.floor(state.frame / 2);
             node.textContent = finalText
               .split('')
-              .map((character, index) => {
-                if (character === ' ' || character === '/' || character === '—') return character;
-                if (index < reveal) return finalText[index];
+              .map((ch, i) => {
+                if (ch === ' ' || ch === '/' || ch === '—') return ch;
+                if (i < reveal) return finalText[i];
                 return glyphs[Math.floor(Math.random() * glyphs.length)];
               })
               .join('');
           },
-          onComplete: () => {
-            node.textContent = finalText;
-          }
+          onComplete: () => { node.textContent = finalText; }
         });
       }
 
-      function TourRow({ item }) {
-        const cityRef = useRef(null);
+      /* ─── AUTO CITY SCRAMBLE ─── */
+      function CityScrambleAuto() {
+        const textRef = useRef(null);
+        const [currentIdx, setCurrentIdx] = useState(0);
 
+        useEffect(() => {
+          let idx = 0;
+          const run = () => {
+            if (textRef.current) {
+              scrambleText(textRef.current, TOUR_CITIES[idx], 0.7);
+            }
+            setCurrentIdx(idx);
+            idx = (idx + 1) % TOUR_CITIES.length;
+          };
+          run();
+          const interval = setInterval(run, 2400);
+          return () => clearInterval(interval);
+        }, []);
+
+        return (
+          <div className="flex items-center justify-center gap-2">
+            <span
+              ref={textRef}
+              className="text-xl font-semibold uppercase tracking-[0.3em] text-milliRed md:text-3xl"
+            >
+              {TOUR_CITIES[0]}
+            </span>
+            <span className="scramble-cursor"></span>
+          </div>
+        );
+      }
+
+      /* ─── HERO — KV FULL SCREEN ─── */
+      function Hero() {
+        const heroRef = useRef(null);
+
+        useEffect(() => {
+          if (!window.gsap || !heroRef.current) return;
+          const el = heroRef.current;
+          const handleMove = (event) => {
+            const rect = el.getBoundingClientRect();
+            const x = (event.clientX - rect.left) / rect.width - 0.5;
+            const y = (event.clientY - rect.top) / rect.height - 0.5;
+            window.gsap.to(el, {
+              backgroundPosition: `${50 + x * 3}% ${50 + y * 3}%`,
+              duration: 1,
+              ease: 'power3.out'
+            });
+          };
+          el.addEventListener('pointermove', handleMove);
+          return () => el.removeEventListener('pointermove', handleMove);
+        }, []);
+
+        return (
+          <section className="relative min-h-screen border-b border-white/10 bg-milliRed overflow-hidden">
+            {/* Full-screen KV */}
+            <div ref={heroRef} className="hero-kv absolute inset-0"></div>
+
+            {/* Bottom gradient */}
+            <div className="absolute inset-x-0 bottom-0 h-40 bg-gradient-to-t from-obsidian via-obsidian/60 to-transparent"></div>
+
+            {/* Auto-scramble city names over hero */}
+            <div className="absolute inset-x-0 bottom-20 z-10">
+              <CityScrambleAuto />
+            </div>
+
+            {/* Scroll CTA */}
+            <a
+              href="#billboard"
+              className="absolute bottom-6 left-1/2 z-10 -translate-x-1/2 border border-white/15 bg-black/20 px-4 py-2 text-[11px] uppercase tracking-[0.28em] text-white backdrop-blur-sm transition hover:border-white/40 hover:bg-black/40"
+            >
+              Tour Dates
+            </a>
+          </section>
+        );
+      }
+
+      /* ─── BILLBOARD 3D TRANSITION ─── */
+      function Billboard() {
+        const cardRef = useRef(null);
+
+        useEffect(() => {
+          if (!window.gsap || !window.ScrollTrigger || !cardRef.current) return;
+          window.gsap.registerPlugin(window.ScrollTrigger);
+
+          window.gsap.fromTo(
+            cardRef.current,
+            {
+              rotateX: 25,
+              rotateY: -8,
+              scale: 0.85,
+              opacity: 0,
+              y: 80,
+            },
+            {
+              rotateX: 0,
+              rotateY: 0,
+              scale: 1,
+              opacity: 1,
+              y: 0,
+              duration: 1.2,
+              ease: 'power3.out',
+              scrollTrigger: {
+                trigger: cardRef.current,
+                start: 'top 85%',
+                end: 'top 40%',
+                scrub: 1,
+              },
+            }
+          );
+        }, []);
+
+        return (
+          <section id="billboard" className="billboard-container bg-obsidian px-5 py-16 sm:px-8 lg:px-12 lg:py-24">
+            <div className="mx-auto max-w-[900px]">
+              <div ref={cardRef} className="billboard-card">
+                {/* Billboard frame — mimics the KV poster in 3D */}
+                <div className="relative overflow-hidden rounded-lg border-2 border-white/10 bg-milliRed shadow-2xl shadow-milliRed/20">
+                  <div className="hero-kv aspect-[16/9] w-full"></div>
+                  {/* Overlay text */}
+                  <div className="absolute inset-0 flex flex-col items-center justify-end bg-gradient-to-t from-black/60 via-transparent to-transparent p-6 pb-8">
+                    <p className="text-xs uppercase tracking-[0.4em] text-white/60">June — October 2026</p>
+                    <p className="mt-1 text-sm uppercase tracking-[0.3em] text-white/80">10 Countries across Asia</p>
+                  </div>
+                </div>
+              </div>
+            </div>
+          </section>
+        );
+      }
+
+      /* ─── TOUR ROW ─── */
+      function TourRow({ item, isAutoActive }) {
+        const cityRef = useRef(null);
         const handleEnter = () => scrambleText(cityRef.current, item.city);
 
         return (
@@ -138,7 +318,7 @@
             <div className="px-5 text-xs uppercase tracking-[0.24em] text-silver transition-colors duration-300 group-hover:text-black/70 md:px-6">
               {item.date}
             </div>
-            <div ref={cityRef} className="px-5 text-lg font-medium uppercase tracking-[0.16em] md:px-0 md:text-2xl">
+            <div ref={cityRef} className={`px-5 text-lg font-medium uppercase tracking-[0.16em] md:px-0 md:text-2xl ${isAutoActive ? 'city-auto-active' : ''}`}>
               {item.city}
             </div>
             <div className="px-5 md:px-0">
@@ -161,45 +341,7 @@
         );
       }
 
-      function Hero() {
-        const heroRef = useRef(null);
-
-        useEffect(() => {
-          if (!window.gsap || !heroRef.current) return;
-
-          const handleMove = (event) => {
-            const rect = heroRef.current.getBoundingClientRect();
-            const x = (event.clientX - rect.left) / rect.width - 0.5;
-            const y = (event.clientY - rect.top) / rect.height - 0.5;
-
-            window.gsap.to(heroRef.current, {
-              backgroundPosition: `${50 + x * 3}% ${50 + y * 3}%`,
-              duration: 1,
-              ease: 'power3.out'
-            });
-          };
-
-          heroRef.current.addEventListener('pointermove', handleMove);
-
-          return () => {
-            heroRef.current?.removeEventListener('pointermove', handleMove);
-          };
-        }, []);
-
-        return (
-          <section className="relative min-h-screen border-b border-white/10 bg-obsidian">
-            <div ref={heroRef} className="hero-image absolute inset-0"></div>
-            <div className="absolute inset-x-0 bottom-0 h-32 bg-gradient-to-t from-obsidian to-transparent"></div>
-            <a
-              href="#tour-dates"
-              className="absolute bottom-6 left-1/2 z-10 -translate-x-1/2 border border-white/15 bg-black/20 px-4 py-2 text-[11px] uppercase tracking-[0.28em] text-white backdrop-blur-sm transition hover:border-white/40 hover:bg-black/40"
-            >
-              Tour Dates
-            </a>
-          </section>
-        );
-      }
-
+      /* ─── TOUR SECTION ─── */
       function TourSection() {
         return (
           <section id="tour-dates" className="bg-obsidian px-5 py-14 sm:px-8 lg:px-12 lg:py-20">
@@ -217,22 +359,118 @@
         );
       }
 
+      /* ─── MERCHANDISE SECTION ─── */
+      function MerchSection() {
+        const sectionRef = useRef(null);
+
+        useEffect(() => {
+          if (!window.gsap || !window.ScrollTrigger || !sectionRef.current) return;
+          const cards = sectionRef.current.querySelectorAll('.merch-card');
+          cards.forEach((card, i) => {
+            window.gsap.fromTo(card,
+              { opacity: 0, y: 60 },
+              {
+                opacity: 1, y: 0,
+                duration: 0.8,
+                delay: i * 0.15,
+                ease: 'power3.out',
+                scrollTrigger: {
+                  trigger: card,
+                  start: 'top 85%',
+                },
+              }
+            );
+          });
+        }, []);
+
+        return (
+          <section ref={sectionRef} className="bg-obsidian px-5 py-16 sm:px-8 lg:px-12 lg:py-24">
+            <div className="mx-auto max-w-[1280px]">
+              <div className="mb-10 text-center">
+                <p className="text-xs uppercase tracking-[0.4em] text-silver">Official Tour</p>
+                <h2 className="mt-2 text-2xl font-semibold uppercase tracking-[0.2em] md:text-4xl">Merchandise</h2>
+              </div>
+
+              <div className="grid grid-cols-1 gap-8 md:grid-cols-2 lg:gap-12">
+                {/* Front */}
+                <div className="merch-card flex flex-col items-center">
+                  <div className="merch-inner w-full max-w-[400px]">
+                    <div className="relative aspect-square rounded-xl bg-[#1A1A1A] p-8 flex items-center justify-center border border-white/5">
+                      {/* T-shirt front mockup */}
+                      <div className="relative w-48 h-56 bg-[#2A2A2A] rounded-t-3xl">
+                        {/* Collar */}
+                        <div className="absolute top-0 left-1/2 -translate-x-1/2 w-12 h-4 bg-[#1A1A1A] rounded-b-full"></div>
+                        {/* Sleeves */}
+                        <div className="absolute top-4 -left-6 w-10 h-16 bg-[#2A2A2A] rounded-l-lg -rotate-12"></div>
+                        <div className="absolute top-4 -right-6 w-10 h-16 bg-[#2A2A2A] rounded-r-lg rotate-12"></div>
+                        {/* Small red logo */}
+                        <div className="absolute top-12 left-1/2 -translate-x-1/2">
+                          <div className="bg-milliRed px-3 py-1 text-[8px] font-bold uppercase tracking-wider text-white">
+                            JAA EHH!
+                          </div>
+                        </div>
+                      </div>
+                    </div>
+                  </div>
+                  <p className="mt-4 text-xs uppercase tracking-[0.3em] text-silver">Front</p>
+                </div>
+
+                {/* Back */}
+                <div className="merch-card flex flex-col items-center">
+                  <div className="merch-inner w-full max-w-[400px]">
+                    <div className="relative aspect-square rounded-xl bg-[#1A1A1A] p-8 flex items-center justify-center border border-white/5">
+                      {/* T-shirt back mockup */}
+                      <div className="relative w-48 h-56 bg-[#2A2A2A] rounded-t-3xl overflow-hidden">
+                        {/* Sleeves */}
+                        <div className="absolute top-4 -left-6 w-10 h-16 bg-[#2A2A2A] rounded-l-lg -rotate-12"></div>
+                        <div className="absolute top-4 -right-6 w-10 h-16 bg-[#2A2A2A] rounded-r-lg rotate-12"></div>
+                        {/* KV graphic */}
+                        <div className="hero-kv absolute top-6 left-3 right-3 h-20 rounded bg-milliRed"></div>
+                        {/* Tour logo */}
+                        <div className="absolute top-28 left-1/2 -translate-x-1/2 text-center">
+                          <div className="bg-milliRed px-2 py-0.5 text-[7px] font-bold uppercase text-white">
+                            JAA EHH! ASIA TOUR 2026
+                          </div>
+                        </div>
+                        {/* City list */}
+                        <div className="absolute top-36 left-1/2 -translate-x-1/2 text-center">
+                          {TOUR_CITIES.map((city) => (
+                            <p key={city} className="text-[5px] uppercase tracking-[0.15em] text-white/70 leading-tight">
+                              {city}
+                            </p>
+                          ))}
+                        </div>
+                      </div>
+                    </div>
+                  </div>
+                  <p className="mt-4 text-xs uppercase tracking-[0.3em] text-silver">Back</p>
+                </div>
+              </div>
+            </div>
+          </section>
+        );
+      }
+
+      /* ─── FOOTER ─── */
       function Footer() {
         return (
           <footer className="border-t border-white/10 bg-obsidian px-5 py-6 text-[11px] uppercase tracking-[0.24em] text-silver sm:px-8 lg:px-12">
             <div className="mx-auto flex max-w-[1280px] flex-col gap-3 sm:flex-row sm:items-center sm:justify-between">
               <p>MILLI — JAA-EHH ASIA TOUR 2026</p>
-              <p>Official Tour Page</p>
+              <p>&copy; YUPP! Entertainment</p>
             </div>
           </footer>
         );
       }
 
+      /* ─── APP ─── */
       function App() {
         return (
           <main>
             <Hero />
+            <Billboard />
             <TourSection />
+            <MerchSection />
             <Footer />
           </main>
         );

@@ -10,40 +10,68 @@
   <script src="https://cdnjs.cloudflare.com/ajax/libs/gsap/3.12.5/ScrollTrigger.min.js"></script>
   <style>
     @font-face{font-family:'Kuunari';src:url('fonts/kuunari-black-condensed.otf') format('opentype');font-display:swap;}
-    @font-face{font-family:'Gotham';src:url('fonts/Gotham-Bold.otf') format('opentype');font-display:swap;}
     *{margin:0;padding:0;box-sizing:border-box;}
     :root{--red:#FF0006;--black:#0A0A0A;--white:#FAFAFA;}
     html{scroll-behavior:smooth;}
     body{background:var(--red);color:var(--black);font-family:'Barlow Condensed','Gotham',sans-serif;overflow-x:hidden;-webkit-font-smoothing:antialiased;}
 
-    /* HERO */
-    .hero{min-height:100vh;display:flex;flex-direction:column;align-items:center;justify-content:center;padding:2rem 1rem;position:relative;}
-    .billboard-img{width:85vw;max-width:700px;height:auto;filter:drop-shadow(0 16px 50px rgba(0,0,0,0.35));will-change:transform;display:block;margin:0 auto;}
-    .logo-stack{text-align:center;margin-top:0.8rem;}
-    .logo-milli{font-family:'Kuunari','Bebas Neue',sans-serif;font-size:clamp(14px,2.5vw,20px);letter-spacing:0.35em;text-transform:uppercase;display:block;}
-    .speech-bubble{display:inline-block;background:var(--black);position:relative;padding:0.15em 0.5em;margin:0.3rem 0;}
-    .speech-bubble h1{font-family:'Kuunari','Bebas Neue',sans-serif;font-size:clamp(40px,10vw,80px);color:var(--red);letter-spacing:0.02em;line-height:1;}
-    .speech-bubble::after{content:'';position:absolute;bottom:-10px;left:50%;transform:translateX(-50%);border-left:12px solid transparent;border-right:12px solid transparent;border-top:12px solid var(--black);}
-    .logo-subtitle{font-family:'Bebas Neue','Kuunari',sans-serif;font-size:clamp(16px,3.5vw,28px);letter-spacing:0.18em;margin-top:0.6rem;}
-    .city-grid{display:grid;grid-template-columns:repeat(3,1fr);gap:0.2rem 1.5rem;text-align:center;margin:1.5rem auto;max-width:500px;padding:0 1rem;}
-    .city-col{display:flex;flex-direction:column;gap:0.15rem;}
-    .city-name{font-weight:800;font-size:clamp(8px,1.6vw,13px);letter-spacing:0.18em;text-transform:uppercase;cursor:default;transition:color 0.2s;}
-    .city-name:hover{color:var(--white);text-shadow:0 0 10px rgba(255,255,255,0.4);}
-    .tour-period{font-family:'Bebas Neue',sans-serif;font-size:clamp(14px,2.5vw,20px);letter-spacing:0.3em;text-align:center;margin-top:1rem;}
-    .hero-yupp{display:block;margin:1rem auto 0;height:20px;}
+    /* HERO — full viewport */
+    .hero{min-height:100vh;display:flex;flex-direction:column;align-items:center;justify-content:center;padding:3rem 1rem;position:relative;overflow:visible;}
+
+    /* Billboard — 100vw FULL BLEED */
+    .billboard-img{width:100vw;max-width:100%;height:auto;filter:drop-shadow(0 20px 60px rgba(0,0,0,0.4));will-change:transform;display:block;margin:0 auto;transition:filter 0.4s;}
+    .billboard-img:hover{filter:drop-shadow(0 25px 80px rgba(0,0,0,0.5)) brightness(1.05);}
+
+    /* Logo */
+    .logo-stack{text-align:center;margin-top:1rem;}
+    .logo-milli{font-family:'Kuunari','Bebas Neue',sans-serif;font-size:clamp(20px,4vw,36px);letter-spacing:0.35em;text-transform:uppercase;display:block;animation:pulse-milli 3s ease-in-out infinite;}
+    @keyframes pulse-milli{0%,100%{opacity:0.7;}50%{opacity:1;}}
+
+    .speech-bubble{display:inline-block;background:var(--black);position:relative;padding:0.15em 0.6em;margin:0.4rem 0;transition:transform 0.3s,box-shadow 0.3s;}
+    .speech-bubble:hover{transform:scale(1.05);box-shadow:0 8px 30px rgba(0,0,0,0.4);}
+    .speech-bubble h1{font-family:'Kuunari','Bebas Neue',sans-serif;font-size:clamp(60px,18vw,160px);color:var(--red);letter-spacing:0.02em;line-height:1;}
+    .speech-bubble::after{content:'';position:absolute;bottom:-12px;left:50%;transform:translateX(-50%);border-left:14px solid transparent;border-right:14px solid transparent;border-top:14px solid var(--black);}
+
+    .logo-subtitle{font-family:'Bebas Neue',sans-serif;font-size:clamp(24px,5vw,48px);letter-spacing:0.2em;margin-top:0.6rem;}
+
+    /* City grid — CLICKABLE */
+    .city-grid{display:grid;grid-template-columns:repeat(3,1fr);gap:0.4rem 3rem;text-align:center;margin:2rem auto;max-width:700px;padding:0 1rem;}
+    .city-col{display:flex;flex-direction:column;gap:0.2rem;}
+    .city-name{font-weight:800;font-size:clamp(12px,2.5vw,20px);letter-spacing:0.2em;text-transform:uppercase;cursor:pointer;transition:color 0.2s,text-shadow 0.2s,transform 0.2s;position:relative;}
+    .city-name:hover{color:var(--white);text-shadow:0 0 15px rgba(255,255,255,0.5);transform:scale(1.1);}
+    .city-name.active{color:var(--white);text-shadow:0 0 20px rgba(255,255,255,0.6);}
+
+    .tour-period{font-family:'Bebas Neue',sans-serif;font-size:clamp(20px,4vw,36px);letter-spacing:0.35em;text-align:center;margin-top:1.2rem;}
+    .hero-yupp{display:block;margin:1.2rem auto 0;height:22px;transition:opacity 0.3s;}
+
+    /* Audio play button */
+    .play-btn{position:fixed;bottom:24px;right:24px;z-index:100;width:56px;height:56px;border-radius:50%;background:var(--black);border:2px solid rgba(255,255,255,0.15);color:var(--white);cursor:pointer;display:flex;align-items:center;justify-content:center;transition:all 0.3s;box-shadow:0 4px 20px rgba(0,0,0,0.3);}
+    .play-btn:hover{transform:scale(1.1);box-shadow:0 6px 30px rgba(0,0,0,0.4);}
+    .play-btn.playing{background:var(--red);border-color:var(--red);animation:pulse-play 2s infinite;}
+    @keyframes pulse-play{0%,100%{box-shadow:0 0 0 0 rgba(255,0,6,0.4);}50%{box-shadow:0 0 0 12px rgba(255,0,6,0);}}
+    .hero-yupp:hover{opacity:0.7;}
+
+    /* Parallax lightning bolts — scattered, move on scroll */
+    .lightning-para{position:absolute;z-index:1;opacity:0.6;pointer-events:none;will-change:transform;}
+    .lightning-para svg{fill:var(--black);}
+
+    /* Scroll hint */
     .scroll-hint{text-align:center;padding:1.5rem 0;opacity:0.5;}
     .scroll-hint span{font-size:11px;font-weight:700;letter-spacing:0.3em;text-transform:uppercase;}
     .scroll-arrow{width:14px;height:14px;border-right:2px solid var(--black);border-bottom:2px solid var(--black);transform:rotate(45deg);margin:6px auto 0;animation:bounce 1.5s infinite;}
     @keyframes bounce{0%,100%{transform:rotate(45deg) translateY(0);}50%{transform:rotate(45deg) translateY(5px);}}
-    .lightning-divider{display:flex;justify-content:center;gap:1.5rem;padding:2rem 0;opacity:0.4;}
+
+    /* Lightning divider */
+    .lightning-divider{display:flex;justify-content:center;gap:1.5rem;padding:2rem 0;opacity:0.35;}
     .lightning-divider svg{width:22px;height:34px;fill:var(--black);}
 
     /* TOUR DATES */
     .tour-dates{padding:2rem 1.5rem 4rem;max-width:850px;margin:0 auto;}
     .tour-dates h2{font-family:'Bebas Neue',sans-serif;font-size:clamp(32px,5vw,52px);letter-spacing:0.06em;text-align:center;margin-bottom:0.5rem;}
     .tour-accent{width:32px;height:3px;background:var(--black);margin:0 auto 2rem;}
-    .date-row{display:flex;justify-content:space-between;align-items:center;padding:0.9rem 0;border-bottom:1px solid rgba(0,0,0,0.18);cursor:pointer;transition:color 0.2s,padding-left 0.2s;}
-    .date-row:hover{color:var(--white);padding-left:8px;}
+    .date-row{display:flex;justify-content:space-between;align-items:center;padding:0.9rem 0.5rem;border-bottom:1px solid rgba(0,0,0,0.18);cursor:pointer;transition:all 0.3s;}
+    .date-row:hover{color:var(--white);padding-left:12px;background:rgba(0,0,0,0.08);}
+    .date-row.highlight{color:var(--white);background:rgba(0,0,0,0.15);padding-left:12px;box-shadow:inset 4px 0 0 var(--black);}
     .d-city{font-family:'Bebas Neue',sans-serif;font-size:clamp(18px,3vw,28px);letter-spacing:0.04em;}
     .d-date{font-weight:700;font-size:12px;letter-spacing:0.18em;text-transform:uppercase;opacity:0.5;}
     .d-badge{font-size:10px;font-weight:800;letter-spacing:0.15em;text-transform:uppercase;padding:3px 8px;border:1px solid rgba(0,0,0,0.25);white-space:nowrap;}
@@ -54,9 +82,10 @@
     /* MERCH */
     .merch-section{padding:2rem 1.5rem 4rem;text-align:center;}
     .merch-section h2{font-family:'Bebas Neue',sans-serif;font-size:clamp(32px,5vw,52px);letter-spacing:0.06em;margin-bottom:1.5rem;}
-    .merch-image{max-width:750px;width:100%;height:auto;filter:drop-shadow(0 12px 40px rgba(0,0,0,0.3));}
+    .merch-image{max-width:750px;width:100%;height:auto;filter:drop-shadow(0 12px 40px rgba(0,0,0,0.3));transition:transform 0.4s;}
+    .merch-image:hover{transform:scale(1.02);}
     .preorder-btn{display:inline-block;margin-top:2rem;padding:0.9rem 3rem;background:var(--black);color:var(--white);font-family:'Bebas Neue',sans-serif;font-size:20px;letter-spacing:0.18em;text-decoration:none;transition:all 0.3s;}
-    .preorder-btn:hover{transform:scale(1.04);box-shadow:0 0 30px rgba(0,0,0,0.3);}
+    .preorder-btn:hover{transform:scale(1.05);box-shadow:0 0 30px rgba(0,0,0,0.3);}
     .preorder-note{font-size:10px;letter-spacing:0.3em;opacity:0.4;margin-top:0.8rem;text-transform:uppercase;}
 
     /* FOOTER */
@@ -64,38 +93,55 @@
     .site-footer img{height:16px;display:block;margin:0 auto 6px;}
 
     @media(max-width:768px){
-      .billboard-img{width:95vw;}
       .city-grid{grid-template-columns:1fr;max-width:200px;gap:0.15rem;}
       .date-row{flex-direction:column;align-items:flex-start;gap:4px;}
+      .lightning-para{display:none;}
     }
   </style>
 </head>
 <body>
-  <section class="hero">
+
+  <section class="hero" id="hero">
+    <!-- Parallax lightning bolts — scattered, move on scroll -->
+    <div class="lightning-para" style="top:6%;left:8%;"><svg viewBox="0 0 24 40" width="36" height="58"><polygon points="14,0 6,16 12,16 4,40 20,18 13,18 20,0"/></svg></div>
+    <div class="lightning-para" style="top:10%;right:10%;"><svg viewBox="0 0 24 40" width="30" height="48"><polygon points="14,0 6,16 12,16 4,40 20,18 13,18 20,0"/></svg></div>
+    <div class="lightning-para" style="top:3%;left:30%;"><svg viewBox="0 0 24 40" width="24" height="38"><polygon points="14,0 6,16 12,16 4,40 20,18 13,18 20,0"/></svg></div>
+    <div class="lightning-para" style="top:8%;right:28%;"><svg viewBox="0 0 24 40" width="28" height="44"><polygon points="14,0 6,16 12,16 4,40 20,18 13,18 20,0"/></svg></div>
+    <div class="lightning-para" style="bottom:20%;left:5%;"><svg viewBox="0 0 24 40" width="32" height="50"><polygon points="14,0 6,16 12,16 4,40 20,18 13,18 20,0"/></svg></div>
+    <div class="lightning-para" style="bottom:15%;right:7%;"><svg viewBox="0 0 24 40" width="26" height="42"><polygon points="14,0 6,16 12,16 4,40 20,18 13,18 20,0"/></svg></div>
+    <div class="lightning-para" style="top:45%;left:2%;"><svg viewBox="0 0 24 40" width="20" height="32"><polygon points="14,0 6,16 12,16 4,40 20,18 13,18 20,0"/></svg></div>
+    <div class="lightning-para" style="top:40%;right:3%;"><svg viewBox="0 0 24 40" width="22" height="36"><polygon points="14,0 6,16 12,16 4,40 20,18 13,18 20,0"/></svg></div>
+
     <img src="assets/billboard.png" alt="MILLI Billboard" class="billboard-img" id="bb" draggable="false" />
     <div class="logo-stack">
       <span class="logo-milli">milli</span>
       <div class="speech-bubble"><h1>JAA EHH!</h1></div>
       <p class="logo-subtitle">ASIA TOUR 2026</p>
     </div>
-    <div class="city-grid">
-      <div class="city-col"><span class="city-name">TAIWAN</span><span class="city-name">HONG KONG</span><span class="city-name">SINGAPORE</span></div>
-      <div class="city-col"><span class="city-name">MALAYSIA</span><span class="city-name">JAPAN</span><span class="city-name">PHILIPPINES</span><span class="city-name">INDONESIA</span></div>
-      <div class="city-col"><span class="city-name">CHINA</span><span class="city-name">THAILAND</span><span class="city-name">SOUTH KOREA</span></div>
+    <div class="city-grid" id="city-grid">
+      <div class="city-col"><span class="city-name" data-city="HONG KONG">TAIWAN</span><span class="city-name" data-city="HONG KONG">HONG KONG</span><span class="city-name" data-city="SINGAPORE">SINGAPORE</span></div>
+      <div class="city-col"><span class="city-name" data-city="KUALA LUMPUR">MALAYSIA</span><span class="city-name" data-city="MANILA / JAKARTA / TOKYO / BEIJING">JAPAN</span><span class="city-name" data-city="MANILA / JAKARTA / TOKYO / BEIJING">PHILIPPINES</span><span class="city-name" data-city="MANILA / JAKARTA / TOKYO / BEIJING">INDONESIA</span></div>
+      <div class="city-col"><span class="city-name" data-city="MANILA / JAKARTA / TOKYO / BEIJING">CHINA</span><span class="city-name" data-city="BANGKOK">THAILAND</span><span class="city-name" data-city="BANGKOK">SOUTH KOREA</span></div>
     </div>
     <p class="tour-period">JUNE — OCTOBER</p>
     <img src="assets/logo.png" alt="YUPP!" class="hero-yupp" />
   </section>
 
   <div class="scroll-hint"><span>Tour Dates</span><div class="scroll-arrow"></div></div>
-
   <div class="lightning-divider"><svg viewBox="0 0 24 40"><polygon points="14,0 6,16 12,16 4,40 20,18 13,18 20,0"/></svg><svg viewBox="0 0 24 40"><polygon points="14,0 6,16 12,16 4,40 20,18 13,18 20,0"/></svg><svg viewBox="0 0 24 40"><polygon points="14,0 6,16 12,16 4,40 20,18 13,18 20,0"/></svg></div>
 
-  <section class="tour-dates"><h2>TOUR DATES</h2><div class="tour-accent"></div><div id="dates"></div></section>
+  <section class="tour-dates" id="tour-dates"><h2>TOUR DATES</h2><div class="tour-accent"></div><div id="dates"></div></section>
 
   <div class="lightning-divider"><svg viewBox="0 0 24 40"><polygon points="14,0 6,16 12,16 4,40 20,18 13,18 20,0"/></svg><svg viewBox="0 0 24 40"><polygon points="14,0 6,16 12,16 4,40 20,18 13,18 20,0"/></svg><svg viewBox="0 0 24 40"><polygon points="14,0 6,16 12,16 4,40 20,18 13,18 20,0"/></svg></div>
 
   <section class="merch-section"><h2>MERCHANDISE</h2><img src="assets/ci-merch.png" alt="Tour Tee" class="merch-image" draggable="false" /><br /><a href="#" class="preorder-btn">PRE-ORDER</a><p class="preorder-note">Limited Edition — Ships June 2026</p></section>
+
+  <!-- Audio player -->
+  <audio id="audio" src="assets/jaaehh.mp3" preload="auto" loop></audio>
+  <button class="play-btn" id="play-btn" title="Play JAA EHH!">
+    <svg id="play-icon" width="20" height="20" viewBox="0 0 24 24" fill="currentColor"><polygon points="6,3 20,12 6,21"/></svg>
+    <svg id="pause-icon" width="20" height="20" viewBox="0 0 24 24" fill="currentColor" style="display:none"><rect x="5" y="3" width="5" height="18"/><rect x="14" y="3" width="5" height="18"/></svg>
+  </button>
 
   <footer class="site-footer"><img src="assets/logo.png" alt="YUPP!" /><span>&copy; 2026 YUPP! Entertainment</span></footer>
 
@@ -106,24 +152,65 @@
 
     gsap.registerPlugin(ScrollTrigger);
 
-    /* Billboard parallax */
-    window.addEventListener('pointermove',function(e){var x=(e.clientX/innerWidth-0.5)*12,y=(e.clientY/innerHeight-0.5)*8;gsap.to('#bb',{x:x,y:y,duration:1,ease:'power3.out'});});
+    /* Billboard hover glow + parallax */
+    window.addEventListener('pointermove',function(e){
+      var x=(e.clientX/innerWidth-0.5)*15,y=(e.clientY/innerHeight-0.5)*10;
+      gsap.to('#bb',{x:x,y:y,duration:1,ease:'power3.out'});
+    });
+
+    /* Lightning parallax on scroll — each bolt moves at different speed */
+    document.querySelectorAll('.lightning-para').forEach(function(el,i){
+      var speed=50+(i*30);
+      gsap.to(el,{y:speed,ease:'none',scrollTrigger:{trigger:'body',start:'top top',end:'bottom bottom',scrub:true}});
+      /* Subtle float animation */
+      gsap.to(el,{y:'+=6',duration:2+i*0.4,repeat:-1,yoyo:true,ease:'sine.inOut'});
+    });
 
     /* City auto-scramble */
     var allCities=document.querySelectorAll('.city-name'),ci=0;
     function nextCity(){var el=allCities[ci%allCities.length];if(!el.dataset.t)el.dataset.t=el.textContent;scramble(el,el.dataset.t);ci++;}
     nextCity();setInterval(nextCity,800);
-    allCities.forEach(function(el){el.addEventListener('mouseenter',function(){scramble(el,el.dataset.t||el.textContent)});});
+
+    /* City click → scroll to matching tour date + highlight */
+    allCities.forEach(function(el){
+      el.addEventListener('mouseenter',function(){scramble(el,el.dataset.t||el.textContent);});
+      el.addEventListener('click',function(){
+        var target=el.dataset.city;
+        var rows=document.querySelectorAll('.date-row');
+        rows.forEach(function(r){r.classList.remove('highlight');});
+        rows.forEach(function(r){
+          if(r.querySelector('.d-city').textContent.indexOf(target)>=0||r.querySelector('.d-city').textContent.indexOf(el.dataset.t)>=0){
+            r.classList.add('highlight');
+            r.scrollIntoView({behavior:'smooth',block:'center'});
+          }
+        });
+      });
+    });
 
     /* Logo entrance */
+    gsap.from('.billboard-img',{opacity:0,scale:0.95,duration:1,ease:'power3.out'});
     gsap.from('.logo-stack',{opacity:0,y:20,duration:0.8,delay:0.3});
     gsap.from('.city-grid',{opacity:0,y:15,duration:0.6,delay:0.5});
 
     /* Tour dates */
     var d=document.getElementById('dates');
-    TOUR.forEach(function(t,i){var r=document.createElement('div');r.className='date-row';r.innerHTML='<span class="d-city">'+t.city+'</span><span class="d-date">'+t.date+'</span><span class="d-badge '+t.badge+'">'+(t.badge?t.badge.toUpperCase():'OPTION')+'</span>';var rc=r.querySelector('.d-city');r.addEventListener('mouseenter',function(){scramble(rc,t.city)});d.appendChild(r);gsap.fromTo(r,{opacity:0,x:-20},{opacity:1,x:0,duration:0.4,delay:i*0.05,scrollTrigger:{trigger:r,start:'top 90%'}});});
+    TOUR.forEach(function(t,i){
+      var r=document.createElement('div');r.className='date-row';
+      r.innerHTML='<span class="d-city">'+t.city+'</span><span class="d-date">'+t.date+'</span><span class="d-badge '+t.badge+'">'+(t.badge?t.badge.toUpperCase():'OPTION')+'</span>';
+      var rc=r.querySelector('.d-city');
+      r.addEventListener('mouseenter',function(){scramble(rc,t.city);});
+      d.appendChild(r);
+      gsap.fromTo(r,{opacity:0,x:-20},{opacity:1,x:0,duration:0.4,delay:i*0.05,scrollTrigger:{trigger:r,start:'top 90%'}});
+    });
 
     gsap.fromTo('.merch-image',{opacity:0,y:40},{opacity:1,y:0,duration:0.8,scrollTrigger:{trigger:'.merch-section',start:'top 80%'}});
+
+    /* Audio player */
+    var audio=document.getElementById('audio'),playBtn=document.getElementById('play-btn'),playIcon=document.getElementById('play-icon'),pauseIcon=document.getElementById('pause-icon');
+    playBtn.addEventListener('click',function(){
+      if(audio.paused){audio.volume=0.5;audio.play();playBtn.classList.add('playing');playIcon.style.display='none';pauseIcon.style.display='block';}
+      else{audio.pause();playBtn.classList.remove('playing');playIcon.style.display='block';pauseIcon.style.display='none';}
+    });
   </script>
 </body>
 </html>

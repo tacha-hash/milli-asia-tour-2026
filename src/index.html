@@ -109,6 +109,11 @@
     </div>
     <p class="tour-period">JUNE — OCTOBER 2026</p>
 
+    <!-- City auto-scramble loop -->
+    <div id="city-scramble" style="text-align:center;margin-top:1rem;min-height:2rem;">
+      <span id="city-text" style="font-family:'Bebas Neue',sans-serif;font-size:clamp(16px,2.5vw,24px);letter-spacing:0.3em;color:var(--black);opacity:0.6;"></span>
+    </div>
+
     <div class="scroll-hint">
       <span>Scroll</span>
       <div class="scroll-arrow"></div>
@@ -193,6 +198,17 @@
         scrub:1.5,
       }
     });
+
+    /* City auto-scramble loop */
+    var CITIES=['TAIWAN','HONG KONG','SINGAPORE','MALAYSIA','JAPAN','PHILIPPINES','INDONESIA','CHINA','THAILAND','SOUTH KOREA'];
+    var cityEl=document.getElementById('city-text');
+    var cityIdx=0;
+    function nextCity(){
+      scramble(cityEl,CITIES[cityIdx],0.5);
+      cityIdx=(cityIdx+1)%CITIES.length;
+    }
+    nextCity();
+    setInterval(nextCity,2500);
 
     /* Lightning subtle float */
     document.querySelectorAll('.lightning').forEach(function(el,i){

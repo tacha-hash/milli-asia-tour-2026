@@ -11,61 +11,47 @@
   <script src="https://cdnjs.cloudflare.com/ajax/libs/gsap/3.12.5/gsap.min.js"></script>
   <script src="https://cdnjs.cloudflare.com/ajax/libs/gsap/3.12.5/ScrollTrigger.min.js"></script>
   <style>
-    @font-face { font-family:'Kuunari'; src:url('fonts/kuunari-black-condensed.otf') format('opentype'); font-display:swap; }
-    @font-face { font-family:'Gotham'; src:url('fonts/Gotham-Bold.otf') format('opentype'); font-display:swap; }
+    @font-face{font-family:'Kuunari';src:url('fonts/kuunari-black-condensed.otf') format('opentype');font-display:swap;}
+    @font-face{font-family:'Gotham';src:url('fonts/Gotham-Bold.otf') format('opentype');font-display:swap;}
 
     *{margin:0;padding:0;box-sizing:border-box;}
     :root{--red:#DA2D40;--black:#0A0A0A;--white:#FAFAFA;}
     html{scroll-behavior:smooth;}
     body{background:var(--red);color:var(--black);font-family:'Barlow Condensed','Gotham',sans-serif;overflow-x:hidden;-webkit-font-smoothing:antialiased;}
 
-    /* ===== HERO ===== */
-    .hero{position:relative;min-height:100vh;display:flex;flex-direction:column;align-items:center;justify-content:center;padding:2rem;}
+    /* ===== HERO: KV poster เต็มจอ ===== */
+    .hero{position:relative;width:100%;background:var(--red);}
+    .hero-poster{display:block;width:100%;height:auto;}
 
-    /* Lightning bolts — SVG decoration */
-    .lightning{position:absolute;z-index:1;opacity:0.7;}
-    .lightning svg{fill:var(--black);}
-    .l1{top:8%;left:10%;transform:rotate(-15deg);}
-    .l2{top:12%;right:12%;transform:rotate(20deg);}
-    .l3{top:5%;left:35%;transform:rotate(-5deg);}
-    .l4{top:10%;right:30%;transform:rotate(10deg);}
-    .l5{bottom:25%;left:8%;transform:rotate(-25deg);}
-    .l6{bottom:20%;right:10%;transform:rotate(15deg);}
-
-    /* Billboard — hero center, becomes sticky */
-    .billboard-wrap{position:sticky;top:1.5rem;z-index:10;text-align:center;padding:0 1rem;}
-    .billboard-wrap img{width:60vw;max-width:500px;height:auto;filter:drop-shadow(0 16px 50px rgba(0,0,0,0.35));will-change:transform;}
-
-    /* Logo below billboard */
-    .tour-logo{text-align:center;margin-top:1.5rem;z-index:5;position:relative;}
-    .tour-logo img{width:220px;height:auto;}
-    .tour-period{font-family:'Bebas Neue','Kuunari',sans-serif;font-size:clamp(16px,2.5vw,22px);letter-spacing:0.35em;color:var(--black);text-align:center;margin-top:0.5rem;opacity:0.7;}
+    /* Interactive overlay on poster — city names that scramble on hover */
+    .city-overlay{position:absolute;cursor:default;font-family:'Barlow Condensed','Gotham',sans-serif;font-weight:800;text-transform:uppercase;letter-spacing:0.15em;color:transparent;transition:color 0.2s;}
+    .city-overlay:hover{color:var(--white);text-shadow:0 0 20px rgba(255,255,255,0.5);}
 
     /* Scroll hint */
-    .scroll-hint{position:absolute;bottom:30px;left:50%;transform:translateX(-50%);z-index:5;text-align:center;opacity:0.6;}
-    .scroll-hint span{font-size:11px;font-weight:700;letter-spacing:0.3em;text-transform:uppercase;color:var(--black);display:block;margin-bottom:6px;}
-    .scroll-arrow{width:14px;height:14px;border-right:2px solid var(--black);border-bottom:2px solid var(--black);transform:rotate(45deg);margin:0 auto;animation:bounce 1.5s infinite;}
+    .scroll-hint{text-align:center;padding:1.5rem 0;opacity:0.5;}
+    .scroll-hint span{font-size:11px;font-weight:700;letter-spacing:0.3em;text-transform:uppercase;color:var(--black);}
+    .scroll-arrow{width:14px;height:14px;border-right:2px solid var(--black);border-bottom:2px solid var(--black);transform:rotate(45deg);margin:6px auto 0;animation:bounce 1.5s infinite;}
     @keyframes bounce{0%,100%{transform:rotate(45deg) translateY(0);}50%{transform:rotate(45deg) translateY(5px);}}
 
-    /* ===== LIGHTNING DIVIDER ===== */
-    .lightning-divider{display:flex;justify-content:center;gap:2rem;padding:2.5rem 0;opacity:0.5;}
-    .lightning-divider svg{width:28px;height:40px;fill:var(--black);}
-
-    /* ===== TOUR DATES — black text on red bg ===== */
-    .tour-dates{padding:2rem 1.5rem 4rem;max-width:850px;margin:0 auto;}
-    .tour-dates h2{font-family:'Bebas Neue','Kuunari',sans-serif;font-size:clamp(32px,5vw,52px);letter-spacing:0.06em;text-align:center;margin-bottom:2rem;}
+    /* ===== TOUR DATES — ดำบนแดง ===== */
+    .tour-dates{padding:3rem 1.5rem 4rem;max-width:850px;margin:0 auto;}
+    .tour-dates h2{font-family:'Bebas Neue','Kuunari',sans-serif;font-size:clamp(32px,5vw,52px);letter-spacing:0.06em;text-align:center;margin-bottom:0.5rem;}
+    .tour-accent{width:32px;height:3px;background:var(--black);margin:0 auto 2rem;}
 
     .date-row{display:flex;justify-content:space-between;align-items:center;padding:0.9rem 0;border-bottom:1px solid rgba(0,0,0,0.18);cursor:pointer;transition:color 0.2s,padding-left 0.2s;}
     .date-row:hover{color:var(--white);padding-left:8px;}
-    .date-row:hover .d-city{text-shadow:1px 0 var(--black),-1px 0 rgba(255,255,255,0.3);}
     .d-city{font-family:'Bebas Neue','Kuunari',sans-serif;font-size:clamp(18px,3vw,28px);letter-spacing:0.04em;}
     .d-date{font-weight:700;font-size:12px;letter-spacing:0.18em;text-transform:uppercase;opacity:0.5;}
     .d-badge{font-size:10px;font-weight:800;letter-spacing:0.15em;text-transform:uppercase;padding:3px 8px;border:1px solid rgba(0,0,0,0.25);white-space:nowrap;}
-    .d-badge.show{border-color:var(--black);color:var(--black);}
+    .d-badge.show{border-color:var(--black);}
     .d-badge.homecoming{background:var(--black);color:var(--red);border-color:var(--black);}
     .d-badge.tbc{border-style:dashed;opacity:0.5;}
 
-    /* ===== MERCH — still on red ===== */
+    /* Lightning divider */
+    .lightning-divider{display:flex;justify-content:center;gap:2rem;padding:2rem 0;opacity:0.4;}
+    .lightning-divider svg{width:24px;height:36px;fill:var(--black);}
+
+    /* ===== MERCH — on red ===== */
     .merch-section{padding:2rem 1.5rem 4rem;text-align:center;}
     .merch-section h2{font-family:'Bebas Neue','Kuunari',sans-serif;font-size:clamp(32px,5vw,52px);letter-spacing:0.06em;margin-bottom:1.5rem;}
     .merch-image{max-width:750px;width:100%;height:auto;filter:drop-shadow(0 12px 40px rgba(0,0,0,0.3));}
@@ -73,52 +59,29 @@
     .preorder-btn:hover{transform:scale(1.04);box-shadow:0 0 30px rgba(0,0,0,0.3);}
     .preorder-note{font-size:10px;letter-spacing:0.3em;opacity:0.4;margin-top:0.8rem;text-transform:uppercase;}
 
-    /* ===== FOOTER — on red ===== */
+    /* ===== FOOTER ===== */
     .site-footer{padding:2rem;text-align:center;opacity:0.5;font-size:10px;letter-spacing:0.2em;text-transform:uppercase;}
-    .site-footer img{height:16px;margin-bottom:6px;display:block;margin:0 auto 6px;}
+    .site-footer img{height:16px;display:block;margin:0 auto 6px;}
 
-    /* ===== RESPONSIVE ===== */
+    /* Responsive */
     @media(max-width:768px){
-      .billboard-wrap img{width:90vw;}
-      .tour-logo img{width:160px;}
       .date-row{flex-direction:column;align-items:flex-start;gap:4px;}
-      .lightning{display:none;}
+      .city-overlay{display:none;}
     }
   </style>
 </head>
 <body>
 
-  <!-- ===== HERO: billboard + lightning + logo ===== -->
-  <section class="hero">
-    <!-- Lightning bolts scattered around -->
-    <div class="lightning l1"><svg viewBox="0 0 24 40" width="32" height="52"><polygon points="14,0 6,16 12,16 4,40 20,18 13,18 20,0"/></svg></div>
-    <div class="lightning l2"><svg viewBox="0 0 24 40" width="28" height="46"><polygon points="14,0 6,16 12,16 4,40 20,18 13,18 20,0"/></svg></div>
-    <div class="lightning l3"><svg viewBox="0 0 24 40" width="22" height="36"><polygon points="14,0 6,16 12,16 4,40 20,18 13,18 20,0"/></svg></div>
-    <div class="lightning l4"><svg viewBox="0 0 24 40" width="26" height="42"><polygon points="14,0 6,16 12,16 4,40 20,18 13,18 20,0"/></svg></div>
-    <div class="lightning l5"><svg viewBox="0 0 24 40" width="24" height="38"><polygon points="14,0 6,16 12,16 4,40 20,18 13,18 20,0"/></svg></div>
-    <div class="lightning l6"><svg viewBox="0 0 24 40" width="30" height="48"><polygon points="14,0 6,16 12,16 4,40 20,18 13,18 20,0"/></svg></div>
-
-    <!-- Billboard element — center, becomes sticky on scroll -->
-    <div class="billboard-wrap" id="billboard">
-      <img src="assets/billboard.png" alt="MILLI Billboard" draggable="false" id="billboard-img" />
-    </div>
-
-    <!-- Logo overlay -->
-    <div class="tour-logo">
-      <img src="assets/logo.png" alt="MILLI JAA EHH! ASIA TOUR 2026" draggable="false" />
-    </div>
-    <p class="tour-period">JUNE — OCTOBER 2026</p>
-
-    <!-- City auto-scramble loop -->
-    <div id="city-scramble" style="text-align:center;margin-top:1rem;min-height:2rem;">
-      <span id="city-text" style="font-family:'Bebas Neue',sans-serif;font-size:clamp(16px,2.5vw,24px);letter-spacing:0.3em;color:var(--black);opacity:0.6;"></span>
-    </div>
-
-    <div class="scroll-hint">
-      <span>Scroll</span>
-      <div class="scroll-arrow"></div>
-    </div>
+  <!-- ===== HERO: KV poster เต็มจอ 1:1 ตาม artwork ===== -->
+  <section class="hero" id="hero">
+    <img src="assets/kv-main.jpg" alt="MILLI JAA-EHH! ASIA TOUR 2026" class="hero-poster" draggable="false" />
   </section>
+
+  <!-- Scroll hint -->
+  <div class="scroll-hint">
+    <span>Tour Dates</span>
+    <div class="scroll-arrow"></div>
+  </div>
 
   <!-- Lightning divider -->
   <div class="lightning-divider">
@@ -127,9 +90,10 @@
     <svg viewBox="0 0 24 40"><polygon points="14,0 6,16 12,16 4,40 20,18 13,18 20,0"/></svg>
   </div>
 
-  <!-- ===== TOUR DATES — black text on red ===== -->
+  <!-- ===== TOUR DATES ===== -->
   <section class="tour-dates">
     <h2>TOUR DATES</h2>
+    <div class="tour-accent"></div>
     <div id="dates"></div>
   </section>
 
@@ -140,7 +104,7 @@
     <svg viewBox="0 0 24 40"><polygon points="14,0 6,16 12,16 4,40 20,18 13,18 20,0"/></svg>
   </div>
 
-  <!-- ===== MERCH — ci-merch.png on red ===== -->
+  <!-- ===== MERCH ===== -->
   <section class="merch-section">
     <h2>MERCHANDISE</h2>
     <img src="assets/ci-merch.png" alt="Tour Tee — Front & Back" class="merch-image" draggable="false" />
@@ -156,17 +120,16 @@
   </footer>
 
   <script>
-    var TOUR = [
-      {date:'26 JUN',city:'HONG KONG',badge:'show',cta:'TICKETS'},
-      {date:'28 JUN',city:'TAIPEI',badge:'show',cta:'TICKETS'},
-      {date:'03 JUL',city:'HONG KONG',badge:'',cta:'WAITLIST'},
-      {date:'10 JUL',city:'SINGAPORE',badge:'show',cta:'TICKETS'},
-      {date:'11 JUL',city:'KUALA LUMPUR',badge:'show',cta:'TICKETS'},
-      {date:'JUL—SEP',city:'MANILA / JAKARTA / TOKYO / BEIJING',badge:'tbc',cta:'NOTIFY'},
-      {date:'03 OCT',city:'BANGKOK',badge:'homecoming',cta:'TICKETS'}
+    var TOUR=[
+      {date:'26 JUN',city:'HONG KONG',badge:'show'},
+      {date:'28 JUN',city:'TAIPEI',badge:'show'},
+      {date:'03 JUL',city:'HONG KONG',badge:''},
+      {date:'10 JUL',city:'SINGAPORE',badge:'show'},
+      {date:'11 JUL',city:'KUALA LUMPUR',badge:'show'},
+      {date:'JUL—SEP',city:'MANILA / JAKARTA / TOKYO / BEIJING',badge:'tbc'},
+      {date:'03 OCT',city:'BANGKOK',badge:'homecoming'}
     ];
 
-    /* Scramble */
     function scramble(el,text){
       if(!el||!gsap)return;
       var chars='ABCDEFGHIJKLMNOPQRSTUVWXYZ!@#%';
@@ -180,46 +143,7 @@
 
     gsap.registerPlugin(ScrollTrigger);
 
-    /* Billboard parallax on mouse */
-    var bbImg=document.getElementById('billboard-img');
-    window.addEventListener('pointermove',function(e){
-      var x=(e.clientX/window.innerWidth-0.5)*12;
-      var y=(e.clientY/window.innerHeight-0.5)*8;
-      gsap.to(bbImg,{x:x,y:y,duration:1,ease:'power3.out'});
-    });
-
-    /* Billboard sticky shrink on scroll */
-    gsap.to('#billboard',{
-      scale:0.5,y:-30,
-      scrollTrigger:{
-        trigger:'.tour-dates',
-        start:'top 80%',
-        end:'top 20%',
-        scrub:1.5,
-      }
-    });
-
-    /* City auto-scramble loop */
-    var CITIES=['TAIWAN','HONG KONG','SINGAPORE','MALAYSIA','JAPAN','PHILIPPINES','INDONESIA','CHINA','THAILAND','SOUTH KOREA'];
-    var cityEl=document.getElementById('city-text');
-    var cityIdx=0;
-    function nextCity(){
-      scramble(cityEl,CITIES[cityIdx],0.5);
-      cityIdx=(cityIdx+1)%CITIES.length;
-    }
-    nextCity();
-    setInterval(nextCity,2500);
-
-    /* Lightning subtle float */
-    document.querySelectorAll('.lightning').forEach(function(el,i){
-      gsap.to(el,{y:'+=8',duration:2+i*0.3,repeat:-1,yoyo:true,ease:'sine.inOut'});
-    });
-
-    /* Logo fade in */
-    gsap.from('.tour-logo',{opacity:0,scale:0.9,duration:0.8,delay:0.3,ease:'power3.out'});
-    gsap.from('.tour-period',{opacity:0,y:10,duration:0.6,delay:0.5});
-
-    /* Render tour dates */
+    /* Tour dates render */
     var datesEl=document.getElementById('dates');
     TOUR.forEach(function(d,i){
       var row=document.createElement('div');

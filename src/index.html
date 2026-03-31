@@ -1,245 +1,312 @@
 <!doctype html>
 <html lang="en">
-  <head>
-    <meta charset="UTF-8" />
-    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-    <title>MILLI — JAA-EHH ASIA TOUR 2026</title>
-    <meta
-      name="description"
-      content="MILLI JAA-EHH ASIA TOUR 2026 — full-screen artwork, minimal tour dates, and clean footer."
-    />
-    <meta property="og:title" content="MILLI — JAA-EHH ASIA TOUR 2026" />
-    <meta property="og:description" content="Full-screen hero artwork with a minimal tour date list." />
-    <meta property="og:type" content="website" />
-    <meta name="theme-color" content="#0A0A0A" />
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>MILLI — JAA EHH! ASIA TOUR 2026</title>
+  <meta name="theme-color" content="#FF0006" />
+  <link href="https://fonts.googleapis.com/css2?family=Bebas+Neue&family=Barlow+Condensed:wght@400;600;700;800&display=swap" rel="stylesheet" />
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/gsap/3.12.5/gsap.min.js"></script>
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/gsap/3.12.5/ScrollTrigger.min.js"></script>
+  <!-- simplex-noise inline (no ES module needed for file:// protocol) -->
+  <script>
+  // Minimal simplex noise 2D — inlined from simplex-noise package
+  function createNoise2D(){
+    var p=new Uint8Array(256);for(var i=0;i<256;i++)p[i]=i;
+    for(var i=255;i>0;i--){var j=Math.floor(Math.random()*(i+1));var t=p[i];p[i]=p[j];p[j]=t;}
+    var perm=new Uint8Array(512),pg=new Float64Array(512);
+    var G2=[[1,1],[-1,1],[1,-1],[-1,-1],[1,0],[-1,0],[0,1],[0,-1]];
+    for(var i=0;i<512;i++){perm[i]=p[i&255];pg[i]=G2[perm[i]%8]?1:0;}
+    var F2=0.5*(Math.sqrt(3)-1),G=((3-Math.sqrt(3))/6);
+    return function(x,y){
+      var s=(x+y)*F2,i=Math.floor(x+s),j=Math.floor(y+s);
+      var t=(i+j)*G,x0=x-(i-t),y0=y-(j-t);
+      var i1=x0>y0?1:0,j1=x0>y0?0:1;
+      var x1=x0-i1+G,y1=y0-j1+G,x2=x0-1+2*G,y2=y0-1+2*G;
+      var ii=i&255,jj=j&255;
+      var n0=0,n1=0,n2=0;
+      var t0=0.5-x0*x0-y0*y0;
+      if(t0>0){t0*=t0;var gi=perm[ii+perm[jj]]%8;var g=G2[gi];n0=t0*t0*(g[0]*x0+g[1]*y0);}
+      var t1=0.5-x1*x1-y1*y1;
+      if(t1>0){t1*=t1;var gi=perm[ii+i1+perm[jj+j1]]%8;var g=G2[gi];n1=t1*t1*(g[0]*x1+g[1]*y1);}
+      var t2=0.5-x2*x2-y2*y2;
+      if(t2>0){t2*=t2;var gi=perm[ii+1+perm[jj+1]]%8;var g=G2[gi];n2=t2*t2*(g[0]*x2+g[1]*y2);}
+      return 70*(n0+n1+n2);
+    };
+  }
+  </script>
+  <style>
+    @font-face{font-family:'Kuunari';src:url('fonts/kuunari-black-condensed.otf') format('opentype');font-display:swap;}
+    *{margin:0;padding:0;box-sizing:border-box;}
+    :root{--red:#FF0006;--black:#0A0A0A;--white:#FAFAFA;}
+    html{scroll-behavior:smooth;}
+    body{background:var(--red);color:var(--black);font-family:'Barlow Condensed','Gotham',sans-serif;overflow-x:hidden;-webkit-font-smoothing:antialiased;}
 
-    <link rel="preconnect" href="https://fonts.googleapis.com" />
-    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
-    <link href="https://fonts.googleapis.com/css2?family=IBM+Plex+Mono:wght@400;500;600&display=swap" rel="stylesheet" />
+    /* HERO */
+    .hero{display:flex;flex-direction:column;align-items:center;position:relative;background:transparent;padding-top:2rem;z-index:2;}
 
-    <script src="https://cdn.tailwindcss.com"></script>
-    <script>
-      window.tailwind = {
-        config: {
-          theme: {
-            extend: {
-              colors: {
-                obsidian: '#0A0A0A',
-                milliRed: '#DA2D40',
-                silver: '#A0A0A0'
-              },
-              fontFamily: {
-                mono: ['IBM Plex Mono', 'ui-monospace', 'SFMono-Regular', 'monospace']
-              }
-            }
-          }
-        }
-      };
-    </script>
+    /* Billboard with dark bg fade — no white edge */
+    .billboard-wrap{position:relative;width:100%;text-align:center;background:transparent;padding:0;}
+    .billboard-img{width:100vw;max-width:100%;height:auto;display:block;will-change:transform;position:relative;z-index:2;}
 
-    <script src="https://unpkg.com/react@18/umd/react.production.min.js" crossorigin></script>
-    <script src="https://unpkg.com/react-dom@18/umd/react-dom.production.min.js" crossorigin></script>
-    <script src="https://unpkg.com/@babel/standalone/babel.min.js"></script>
-    <script src="https://cdnjs.cloudflare.com/ajax/libs/gsap/3.12.5/gsap.min.js" crossorigin></script>
+    /* BLACK FRAME — flush with billboard, no gap */
+    .black-frame{background:var(--black);color:var(--white);padding:0 1.5rem 2rem;margin-top:-4px;position:relative;z-index:3;}
+    .wave-content{position:relative;z-index:2;}
 
-    <style>
-      :root {
-        color-scheme: dark;
-      }
+    /* Logo speech bubble — between billboard and cities */
+    .logo-block{text-align:center;margin-bottom:1.2rem;margin-top:-1px;/* flush with billboard */}
+    .logo-milli{font-family:'Kuunari','Bebas Neue',sans-serif;font-size:clamp(14px,2.5vw,20px);letter-spacing:0.35em;text-transform:uppercase;display:block;color:var(--white);opacity:0.8;}
+    .speech-bubble{display:inline-block;background:var(--red);position:relative;padding:0.15em 0.6em;margin:0.2rem 0;width:85vw;max-width:700px;}
+    .speech-bubble h1{font-family:'Kuunari','Bebas Neue',sans-serif;font-size:clamp(52px,14vw,120px);color:var(--white);letter-spacing:0.02em;line-height:1;text-align:center;}
+    .speech-bubble::after{content:'';position:absolute;bottom:-12px;left:50%;transform:translateX(-50%);border-left:14px solid transparent;border-right:14px solid transparent;border-top:14px solid var(--red);}
+    .logo-sub{font-family:'Bebas Neue',sans-serif;font-size:clamp(18px,4vw,36px);letter-spacing:0.25em;margin-top:0.5rem;color:var(--white);opacity:0.8;}
 
-      html {
-        scroll-behavior: smooth;
-        background: #0a0a0a;
-      }
+    /* City grid */
+    .city-grid{display:grid;grid-template-columns:repeat(3,1fr);gap:0.4rem 3rem;text-align:center;margin:0 auto;max-width:600px;}
+    .city-col{display:flex;flex-direction:column;gap:0.25rem;}
+    .city-name{font-weight:800;font-size:clamp(11px,2vw,16px);letter-spacing:0.2em;text-transform:uppercase;cursor:pointer;transition:all 0.2s;color:rgba(255,255,255,0.7);}
+    .city-name:hover{color:var(--red);text-shadow:0 0 12px rgba(255,0,6,0.5);transform:scale(1.08);}
+    .tour-period{font-family:'Bebas Neue',sans-serif;font-size:clamp(16px,3vw,26px);letter-spacing:0.35em;text-align:center;margin-top:1rem;color:var(--white);}
+    .frame-yupp{display:block;margin:0.8rem auto 0;height:18px;opacity:0.4;}
+    .scroll-hint{text-align:center;padding:1rem 0;opacity:0.4;}
+    .scroll-hint span{font-size:10px;font-weight:700;letter-spacing:0.3em;text-transform:uppercase;color:var(--white);}
+    .scroll-arrow{width:12px;height:12px;border-right:2px solid var(--white);border-bottom:2px solid var(--white);transform:rotate(45deg);margin:4px auto 0;animation:bounce 1.5s infinite;}
+    @keyframes bounce{0%,100%{transform:rotate(45deg) translateY(0);}50%{transform:rotate(45deg) translateY(4px);}}
 
-      body {
-        margin: 0;
-        background: #0a0a0a;
-      }
+    /* Lightning — 3D depth layers */
+    .ltn{position:absolute;z-index:1;pointer-events:none;}
+    .ltn-float{will-change:transform;}
+    .ltn svg{fill:var(--black);}
+    .ltn.far{opacity:0.2;} .ltn.mid{opacity:0.45;} .ltn.near{opacity:0.7;}
 
-      .hero-image {
-        background-image: url('https://lh3.googleusercontent.com/d/1O01RuN39YZoxKRqYumS1OFJ7rzbl1aDn');
-        background-size: cover;
-        background-position: center;
-      }
+    /* WAVE BG — SVG container for mouse-interactive waves */
+    .wave-wrap{position:relative;overflow:hidden;background:transparent;}
+    .wave-svg-global{position:fixed;inset:0;z-index:0;pointer-events:none;opacity:0.35;}
+    .wave-svg{position:absolute;inset:0;z-index:0;pointer-events:none;}
+    .wave-content{position:relative;z-index:1;padding:3rem 1.5rem 4rem;}
 
-      .row-divider::after {
-        content: '';
-        position: absolute;
-        inset: auto 0 0 0;
-        height: 1px;
-        background: rgba(255, 255, 255, 0.12);
-      }
-    </style>
-  </head>
-  <body class="bg-obsidian font-mono text-white selection:bg-milliRed selection:text-white">
-    <div id="root"></div>
+    /* TOUR DATES */
+    .tour-dates{max-width:850px;margin:0 auto;}
+    .tour-dates h2{font-family:'Bebas Neue',sans-serif;font-size:clamp(32px,5vw,52px);letter-spacing:0.06em;text-align:center;margin-bottom:2rem;}
+    .date-row{display:flex;justify-content:space-between;align-items:center;padding:0.9rem 0.5rem;border-bottom:1px solid rgba(0,0,0,0.15);cursor:pointer;transition:all 0.3s;}
+    .date-row:hover{color:var(--white);background:rgba(0,0,0,0.1);padding-left:12px;}
+    .date-row.highlight{color:var(--white);background:rgba(0,0,0,0.2);padding-left:12px;box-shadow:inset 4px 0 0 var(--black);}
+    .d-city{font-family:'Bebas Neue',sans-serif;font-size:clamp(18px,3vw,28px);letter-spacing:0.04em;}
+    .d-date{font-weight:700;font-size:12px;letter-spacing:0.18em;text-transform:uppercase;opacity:0.5;}
+    .d-badge{font-size:10px;font-weight:800;letter-spacing:0.15em;text-transform:uppercase;padding:3px 8px;border:1px solid rgba(0,0,0,0.25);white-space:nowrap;}
+    .d-badge.show{border-color:var(--black);}
+    .d-badge.homecoming{background:var(--black);color:var(--red);}
+    .d-badge.tbc{border-style:dashed;opacity:0.5;}
 
-    <script type="text/babel">
-      const { useEffect, useRef } = React;
+    /* MERCH */
+    .merch-section{text-align:center;max-width:850px;margin:3rem auto 0;}
+    .merch-section h2{font-family:'Bebas Neue',sans-serif;font-size:clamp(32px,5vw,52px);letter-spacing:0.06em;margin-bottom:1.5rem;}
+    .merch-image{max-width:750px;width:100%;height:auto;filter:drop-shadow(0 12px 40px rgba(0,0,0,0.3));transition:transform 0.4s;}
+    .merch-image:hover{transform:scale(1.02);}
+    .preorder-btn{display:inline-block;margin-top:2rem;padding:0.9rem 3rem;background:var(--black);color:var(--white);font-family:'Bebas Neue',sans-serif;font-size:20px;letter-spacing:0.18em;text-decoration:none;transition:all 0.3s;}
+    .preorder-btn:hover{transform:scale(1.05);box-shadow:0 0 30px rgba(0,0,0,0.3);}
 
-      const TOUR_DATES = [
-        { id: 1, date: '26 JUN 2026', city: 'HONG KONG', badge: 'SHOW', cta: 'TICKETS' },
-        { id: 2, date: '27 JUN 2026', city: 'TRAVEL DAY', badge: 'TRAVEL', cta: 'INFO' },
-        { id: 3, date: '28 JUN 2026', city: 'TAIPEI', badge: 'SHOW', cta: 'TICKETS' },
-        { id: 4, date: '03 JUL 2026', city: 'HONG KONG', badge: 'OPTION', cta: 'WAITLIST' },
-        { id: 5, date: '10 JUL 2026', city: 'SINGAPORE', badge: 'SHOW', cta: 'TICKETS' },
-        { id: 6, date: '11 JUL 2026', city: 'KUALA LUMPUR', badge: 'SHOW', cta: 'TICKETS' },
-        { id: 7, date: '17—18 JUL 2026', city: 'SINGAPORE / KUALA LUMPUR', badge: 'OPTION', cta: 'WAITLIST' },
-        { id: 8, date: 'JUL—SEP 2026', city: 'MANILA / INDONESIA / JAPAN / CHINA', badge: 'TBC', cta: 'NOTIFY' },
-        { id: 9, date: '03 OCT 2026', city: 'BANGKOK', badge: 'HOMECOMING', cta: 'TICKETS' }
-      ];
+    /* FOOTER */
+    .site-footer{padding:2rem;text-align:center;opacity:0.5;font-size:10px;letter-spacing:0.2em;text-transform:uppercase;}
+    .site-footer img{height:16px;display:block;margin:0 auto 6px;}
 
-      const badgeClassMap = {
-        SHOW: 'border-white/15 text-white',
-        TRAVEL: 'border-white/15 text-silver',
-        OPTION: 'border-white/20 text-white',
-        TBC: 'border-dashed border-white/30 text-silver',
-        HOMECOMING: 'border-milliRed text-milliRed'
-      };
+    /* Audio tiny icon */
+    .audio-btn{position:fixed;bottom:14px;left:14px;z-index:100;width:32px;height:32px;border-radius:50%;background:rgba(0,0,0,0.5);border:1px solid rgba(255,255,255,0.1);color:#fff;cursor:pointer;display:flex;align-items:center;justify-content:center;transition:all 0.3s;backdrop-filter:blur(4px);}
+    .audio-btn.playing{background:var(--red);border-color:var(--red);}
 
-      function scrambleText(node, finalText) {
-        if (!node || !window.gsap) return;
-        const state = { frame: 0 };
-        const glyphs = 'ABCDEFGHIJKLMNOPQRSTUVWXYZ0123456789';
-        window.gsap.killTweensOf(state);
-        window.gsap.to(state, {
-          frame: finalText.length * 2,
-          duration: 0.55,
-          ease: 'power4.out',
-          onUpdate: () => {
-            const reveal = Math.floor(state.frame / 2);
-            node.textContent = finalText
-              .split('')
-              .map((character, index) => {
-                if (character === ' ' || character === '/' || character === '—') return character;
-                if (index < reveal) return finalText[index];
-                return glyphs[Math.floor(Math.random() * glyphs.length)];
-              })
-              .join('');
-          },
-          onComplete: () => {
-            node.textContent = finalText;
+    @media(max-width:768px){.city-grid{grid-template-columns:1fr;max-width:200px;}.date-row{flex-direction:column;align-items:flex-start;gap:4px;}.ltn{display:none;}}
+  </style>
+</head>
+<body>
+
+  <!-- Global wave lines — covers entire page -->
+  <svg class="wave-svg-global" id="wave-global" xmlns="http://www.w3.org/2000/svg"></svg>
+
+  <section class="hero" id="hero">
+    <!-- Lightning 3D layers -->
+    <div class="ltn near" style="top:4%;left:5%;"><div class="ltn-float"><svg width="40" height="64" viewBox="0 0 40 64"><path d="M22 0L8 24h10L4 64l28-32H20L34 0z"/></svg></div></div>
+    <div class="ltn near" style="top:7%;right:6%;"><div class="ltn-float"><svg width="36" height="56" viewBox="0 0 40 64"><path d="M22 0L8 24h10L4 64l28-32H20L34 0z"/></svg></div></div>
+    <div class="ltn mid" style="top:1%;left:25%;"><div class="ltn-float"><svg width="26" height="42" viewBox="0 0 40 64"><path d="M22 0L8 24h10L4 64l28-32H20L34 0z"/></svg></div></div>
+    <div class="ltn mid" style="top:5%;right:22%;"><div class="ltn-float"><svg width="28" height="44" viewBox="0 0 40 64"><path d="M22 0L8 24h10L4 64l28-32H20L34 0z"/></svg></div></div>
+    <div class="ltn far" style="top:10%;left:16%;"><div class="ltn-float"><svg width="18" height="28" viewBox="0 0 40 64"><path d="M22 0L8 24h10L4 64l28-32H20L34 0z"/></svg></div></div>
+    <div class="ltn far" style="top:3%;right:38%;"><div class="ltn-float"><svg width="16" height="26" viewBox="0 0 40 64"><path d="M22 0L8 24h10L4 64l28-32H20L34 0z"/></svg></div></div>
+
+    <!-- Billboard with dark bg fade (no white edges) -->
+    <div class="billboard-wrap">
+      <img src="assets/billboard.png" alt="MILLI Billboard" class="billboard-img" id="bb" draggable="false" />
+    </div>
+  </section>
+
+  <!-- BLACK FRAME — flush with billboard -->
+  <div class="black-frame">
+    <!-- Logo speech bubble -->
+    <div class="logo-block">
+      <span class="logo-milli">milli</span>
+      <div class="speech-bubble"><h1>JAA EHH!</h1></div>
+      <p class="logo-sub">ASIA TOUR 2026</p>
+    </div>
+    <!-- Cities 3 col — names match tour dates exactly -->
+    <div class="city-grid">
+      <div class="city-col"><span class="city-name" data-city="TAIWAN">TAIWAN</span><span class="city-name" data-city="HONG KONG">HONG KONG</span><span class="city-name" data-city="SINGAPORE">SINGAPORE</span></div>
+      <div class="city-col"><span class="city-name" data-city="MALAYSIA">MALAYSIA</span><span class="city-name" data-city="JAPAN">JAPAN</span><span class="city-name" data-city="PHILIPPINES">PHILIPPINES</span><span class="city-name" data-city="INDONESIA">INDONESIA</span></div>
+      <div class="city-col"><span class="city-name" data-city="CHINA">CHINA</span><span class="city-name" data-city="THAILAND">THAILAND</span><span class="city-name" data-city="SOUTH KOREA">SOUTH KOREA</span></div>
+    </div>
+    <p class="tour-period">JUNE — OCTOBER</p>
+    <img src="assets/logo.png" alt="YUPP!" class="frame-yupp" />
+    <div class="scroll-hint"><span>Tour Dates</span><div class="scroll-arrow"></div></div>
+  </div>
+
+  <!-- WAVE BG — mouse interactive SVG lines (from 21st.dev) -->
+  <div class="wave-wrap" id="wave-wrap">
+    <svg class="wave-svg" id="wave-svg" xmlns="http://www.w3.org/2000/svg"></svg>
+    <div class="wave-content">
+      <section class="tour-dates" id="tour-dates"><h2>TOUR DATES</h2><div id="dates"></div></section>
+      <section class="merch-section"><h2>MERCHANDISE</h2><img src="assets/ci-merch.png" alt="Tour Tee" class="merch-image" draggable="false" /><br /><a href="#" class="preorder-btn">PRE-ORDER</a></section>
+    </div>
+  </div>
+
+  <footer class="site-footer"><img src="assets/logo.png" alt="YUPP!" /><span>&copy; 2026 YUPP! Entertainment</span></footer>
+
+  <audio id="audio" src="assets/jaaehh.mp3" preload="auto" loop autoplay></audio>
+  <button class="audio-btn" id="audio-btn" title="Play/Pause">
+    <svg id="play-ico" width="12" height="12" viewBox="0 0 24 24" fill="currentColor"><polygon points="6,3 20,12 6,21"/></svg>
+    <svg id="pause-ico" width="12" height="12" viewBox="0 0 24 24" fill="currentColor" style="display:none"><rect x="5" y="3" width="5" height="18"/><rect x="14" y="3" width="5" height="18"/></svg>
+  </button>
+
+  <script>
+
+    /* ─── TOUR DATA — city names match hero grid exactly ─── */
+    var TOUR=[
+      {date:'28 JUN',city:'TAIWAN',badge:'show'},
+      {date:'26 JUN',city:'HONG KONG',badge:'show'},
+      {date:'10 JUL',city:'SINGAPORE',badge:'show'},
+      {date:'11 JUL',city:'MALAYSIA',badge:'show'},
+      {date:'26 JUL',city:'JAPAN',badge:'show'},
+      {date:'09 AUG',city:'PHILIPPINES',badge:'show'},
+      {date:'23 AUG',city:'INDONESIA',badge:'show'},
+      {date:'13 SEP',city:'CHINA',badge:'tbc'},
+      {date:'03 OCT',city:'THAILAND',badge:'homecoming'},
+      {date:'18 OCT',city:'SOUTH KOREA',badge:'show'}
+    ];
+
+    function scramble(el,text){if(!el||!gsap)return;var chars='ABCDEFGHIJKLMNOPQRSTUVWXYZ!@#%',s={f:0};gsap.killTweensOf(s);gsap.to(s,{f:text.length*2,duration:0.4,ease:'power4.out',onUpdate:function(){var r=Math.floor(s.f/2);el.textContent=text.split('').map(function(c,i){return' /—'.indexOf(c)>=0?c:i<r?text[i]:chars[Math.floor(Math.random()*chars.length)]}).join('')},onComplete:function(){el.textContent=text}});}
+
+    gsap.registerPlugin(ScrollTrigger);
+
+    /* Billboard parallax */
+    window.addEventListener('pointermove',function(e){var x=(e.clientX/innerWidth-0.5)*15,y=(e.clientY/innerHeight-0.5)*10;gsap.to('#bb',{x:x,y:y,duration:1,ease:'power3.out'});});
+
+    /* Lightning parallax */
+    document.querySelectorAll('.ltn').forEach(function(el,i){gsap.to(el,{y:40+i*25,ease:'none',scrollTrigger:{trigger:'body',start:'top top',end:'bottom bottom',scrub:true}});});
+    document.querySelectorAll('.ltn-float').forEach(function(el,i){gsap.to(el,{y:'+=5',rotation:'+=3',duration:2.5+i*0.3,repeat:-1,yoyo:true,ease:'sine.inOut'});});
+
+    /* City scramble + click */
+    var allCities=document.querySelectorAll('.city-name'),ci=0;
+    function nextCity(){var el=allCities[ci%allCities.length];if(!el.dataset.t)el.dataset.t=el.textContent;scramble(el,el.dataset.t);ci++;}
+    nextCity();setInterval(nextCity,800);
+
+    allCities.forEach(function(el){
+      el.addEventListener('mouseenter',function(){scramble(el,el.dataset.t||el.textContent);});
+      el.addEventListener('click',function(){
+        var target=el.dataset.city;
+        var rows=document.querySelectorAll('.date-row');
+        rows.forEach(function(r){r.classList.remove('highlight');});
+        var found=false;
+        rows.forEach(function(r){
+          if(r.querySelector('.d-city').textContent===target){
+            r.classList.add('highlight');
+            if(!found){r.scrollIntoView({behavior:'smooth',block:'center'});found=true;}
           }
         });
+        if(!found)document.getElementById('tour-dates').scrollIntoView({behavior:'smooth',block:'start'});
+      });
+    });
+
+    /* Tour dates */
+    var datesEl=document.getElementById('dates');
+    TOUR.forEach(function(t,i){
+      var r=document.createElement('div');r.className='date-row';
+      r.innerHTML='<span class="d-city">'+t.city+'</span><span class="d-date">'+t.date+'</span><span class="d-badge '+t.badge+'">'+(t.badge?t.badge.toUpperCase():'OPTION')+'</span>';
+      var rc=r.querySelector('.d-city');
+      r.addEventListener('mouseenter',function(){scramble(rc,t.city);});
+      datesEl.appendChild(r);
+      gsap.fromTo(r,{opacity:0,x:-20},{opacity:1,x:0,duration:0.4,delay:i*0.05,scrollTrigger:{trigger:r,start:'top 90%'}});
+    });
+
+    gsap.fromTo('.merch-image',{opacity:0,y:40},{opacity:1,y:0,duration:0.8,scrollTrigger:{trigger:'.merch-section',start:'top 80%'}});
+
+    /* ─── WAVE BACKGROUND (from 21st.dev/wave-background) ─── */
+    (function(){
+      var wrap=document.body,svg=document.getElementById('wave-global');
+      if(!wrap||!svg)return;
+      var noise2D=createNoise2D();
+      var paths=[],lines=[];
+      var mouse={x:-10,y:0,lx:0,ly:0,sx:0,sy:0,v:0,vs:0,a:0,set:false};
+      var bounds;
+
+      function setup(){
+        bounds=wrap.getBoundingClientRect();
+        svg.setAttribute('width',bounds.width);svg.setAttribute('height',bounds.height);
+        paths.forEach(function(p){p.remove();});paths=[];lines=[];
+        var xGap=10,yGap=10,w=bounds.width+200,h=bounds.height+30;
+        var cols=Math.ceil(w/xGap),rows=Math.ceil(h/yGap);
+        var xOff=(bounds.width-xGap*cols)/2,yOff=(bounds.height-yGap*rows)/2;
+        for(var i=0;i<cols;i++){
+          var pts=[];
+          for(var j=0;j<rows;j++){pts.push({x:xOff+xGap*i,y:yOff+yGap*j,wx:0,wy:0,cx:0,cy:0,cvx:0,cvy:0});}
+          var p=document.createElementNS('http://www.w3.org/2000/svg','path');
+          p.setAttribute('fill','none');p.setAttribute('stroke','rgba(0,0,0,0.8)');p.setAttribute('stroke-width','1.5');
+          svg.appendChild(p);paths.push(p);lines.push(pts);
+        }
       }
 
-      function TourRow({ item }) {
-        const cityRef = useRef(null);
-
-        const handleEnter = () => scrambleText(cityRef.current, item.city);
-
-        return (
-          <article
-            className="row-divider group relative grid grid-cols-1 gap-4 px-0 py-5 transition-colors duration-300 hover:bg-white hover:text-black md:grid-cols-[180px_minmax(0,1fr)_auto_auto] md:items-center md:gap-6 md:py-6"
-            onMouseEnter={handleEnter}
-            onFocus={handleEnter}
-          >
-            <div className="px-5 text-xs uppercase tracking-[0.24em] text-silver transition-colors duration-300 group-hover:text-black/70 md:px-6">
-              {item.date}
-            </div>
-            <div ref={cityRef} className="px-5 text-lg font-medium uppercase tracking-[0.16em] md:px-0 md:text-2xl">
-              {item.city}
-            </div>
-            <div className="px-5 md:px-0">
-              <span className={[
-                'inline-flex items-center rounded-full border px-3 py-1 text-[11px] uppercase tracking-[0.24em]',
-                badgeClassMap[item.badge]
-              ].join(' ')}>
-                {item.badge}
-              </span>
-            </div>
-            <div className="px-5 md:px-6 md:text-right">
-              <a
-                href="#"
-                className="inline-flex items-center justify-center border border-white/15 px-4 py-2 text-[11px] uppercase tracking-[0.26em] transition-colors duration-300 group-hover:border-black/20 group-hover:text-black"
-              >
-                {item.cta}
-              </a>
-            </div>
-          </article>
-        );
+      function onMove(x,y){
+        if(!bounds)return;
+        mouse.x=x-bounds.left;mouse.y=y-bounds.top+window.scrollY;
+        if(!mouse.set){mouse.sx=mouse.x;mouse.sy=mouse.y;mouse.lx=mouse.x;mouse.ly=mouse.y;mouse.set=true;}
       }
 
-      function Hero() {
-        const heroRef = useRef(null);
+      window.addEventListener('mousemove',function(e){onMove(e.pageX,e.pageY);});
+      window.addEventListener('touchmove',function(e){onMove(e.touches[0].clientX,e.touches[0].clientY);},{passive:true});
+      window.addEventListener('resize',setup);
+      setup();
 
-        useEffect(() => {
-          if (!window.gsap || !heroRef.current) return;
+      function tick(time){
+        mouse.sx+=(mouse.x-mouse.sx)*0.1;mouse.sy+=(mouse.y-mouse.sy)*0.1;
+        var dx=mouse.x-mouse.lx,dy=mouse.y-mouse.ly;
+        mouse.v=Math.hypot(dx,dy);mouse.vs+=(mouse.v-mouse.vs)*0.1;mouse.vs=Math.min(100,mouse.vs);
+        mouse.lx=mouse.x;mouse.ly=mouse.y;mouse.a=Math.atan2(dy,dx);
 
-          const handleMove = (event) => {
-            const rect = heroRef.current.getBoundingClientRect();
-            const x = (event.clientX - rect.left) / rect.width - 0.5;
-            const y = (event.clientY - rect.top) / rect.height - 0.5;
-
-            window.gsap.to(heroRef.current, {
-              backgroundPosition: `${50 + x * 3}% ${50 + y * 3}%`,
-              duration: 1,
-              ease: 'power3.out'
-            });
-          };
-
-          heroRef.current.addEventListener('pointermove', handleMove);
-
-          return () => {
-            heroRef.current?.removeEventListener('pointermove', handleMove);
-          };
-        }, []);
-
-        return (
-          <section className="relative min-h-screen border-b border-white/10 bg-obsidian">
-            <div ref={heroRef} className="hero-image absolute inset-0"></div>
-            <div className="absolute inset-x-0 bottom-0 h-32 bg-gradient-to-t from-obsidian to-transparent"></div>
-            <a
-              href="#tour-dates"
-              className="absolute bottom-6 left-1/2 z-10 -translate-x-1/2 border border-white/15 bg-black/20 px-4 py-2 text-[11px] uppercase tracking-[0.28em] text-white backdrop-blur-sm transition hover:border-white/40 hover:bg-black/40"
-            >
-              Tour Dates
-            </a>
-          </section>
-        );
+        lines.forEach(function(pts,li){
+          pts.forEach(function(p){
+            var m=noise2D((p.x+time*0.008)*0.003,(p.y+time*0.003)*0.002)*8;
+            p.wx=Math.cos(m)*12;p.wy=Math.sin(m)*6;
+            var ddx=p.x-mouse.sx,ddy=p.y-mouse.sy,d=Math.hypot(ddx,ddy),l=Math.max(175,mouse.vs);
+            if(d<l){var s=1-d/l,f=Math.cos(d*0.001)*s;p.cvx+=Math.cos(mouse.a)*f*l*mouse.vs*0.00035;p.cvy+=Math.sin(mouse.a)*f*l*mouse.vs*0.00035;}
+            p.cvx+=(0-p.cx)*0.01;p.cvy+=(0-p.cy)*0.01;p.cvx*=0.95;p.cvy*=0.95;
+            p.cx+=p.cvx;p.cy+=p.cvy;p.cx=Math.min(50,Math.max(-50,p.cx));p.cy=Math.min(50,Math.max(-50,p.cy));
+          });
+          if(pts.length<2||!paths[li])return;
+          var d='M '+(pts[0].x+pts[0].wx)+' '+(pts[0].y+pts[0].wy);
+          for(var i=1;i<pts.length;i++){var q=pts[i];d+=' L '+(q.x+q.wx+q.cx)+' '+(q.y+q.wy+q.cy);}
+          paths[li].setAttribute('d',d);
+        });
+        requestAnimationFrame(tick);
       }
+      requestAnimationFrame(tick);
+    })();
 
-      function TourSection() {
-        return (
-          <section id="tour-dates" className="bg-obsidian px-5 py-14 sm:px-8 lg:px-12 lg:py-20">
-            <div className="mx-auto max-w-[1280px] border border-white/10">
-              <div className="border-b border-white/10 px-5 py-5 text-xs uppercase tracking-[0.32em] text-silver md:px-6">
-                Tour Dates
-              </div>
-              <div>
-                {TOUR_DATES.map((item) => (
-                  <TourRow key={item.id} item={item} />
-                ))}
-              </div>
-            </div>
-          </section>
-        );
-      }
-
-      function Footer() {
-        return (
-          <footer className="border-t border-white/10 bg-obsidian px-5 py-6 text-[11px] uppercase tracking-[0.24em] text-silver sm:px-8 lg:px-12">
-            <div className="mx-auto flex max-w-[1280px] flex-col gap-3 sm:flex-row sm:items-center sm:justify-between">
-              <p>MILLI — JAA-EHH ASIA TOUR 2026</p>
-              <p>Official Tour Page</p>
-            </div>
-          </footer>
-        );
-      }
-
-      function App() {
-        return (
-          <main>
-            <Hero />
-            <TourSection />
-            <Footer />
-          </main>
-        );
-      }
-
-      const root = ReactDOM.createRoot(document.getElementById('root'));
-      root.render(<App />);
-    </script>
-  </body>
+    /* Audio autoplay on first interaction */
+    var audio=document.getElementById('audio'),abtn=document.getElementById('audio-btn'),pI=document.getElementById('play-ico'),paI=document.getElementById('pause-ico');
+    function playA(){audio.volume=0.3;audio.play().then(function(){abtn.classList.add('playing');pI.style.display='none';paI.style.display='block';}).catch(function(){});}
+    function pauseA(){audio.pause();abtn.classList.remove('playing');pI.style.display='block';paI.style.display='none';}
+    abtn.addEventListener('click',function(){audio.paused?playA():pauseA();});
+    /* Try autoplay immediately on load */
+    playA();
+    /* Fallback: browser blocks autoplay without interaction → play on first click/scroll/key */
+    ['click','scroll','keydown','touchstart'].forEach(function(evt){
+      document.addEventListener(evt,function f(){playA();document.removeEventListener(evt,f);},{once:true});
+    });
+  </script>
+</body>
 </html>

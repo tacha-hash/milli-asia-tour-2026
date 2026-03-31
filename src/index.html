@@ -53,6 +53,7 @@
 
     /* Parallax lightning bolts — scattered, move on scroll */
     .lightning-para{position:absolute;z-index:1;opacity:0.6;pointer-events:none;will-change:transform;}
+    .lightning-float{will-change:transform;}
     .lightning-para svg{fill:var(--black);}
 
     /* Scroll hint */
@@ -103,14 +104,14 @@
 
   <section class="hero" id="hero">
     <!-- Parallax lightning bolts — scattered, move on scroll -->
-    <div class="lightning-para" style="top:6%;left:8%;"><svg viewBox="0 0 24 40" width="36" height="58"><polygon points="14,0 6,16 12,16 4,40 20,18 13,18 20,0"/></svg></div>
-    <div class="lightning-para" style="top:10%;right:10%;"><svg viewBox="0 0 24 40" width="30" height="48"><polygon points="14,0 6,16 12,16 4,40 20,18 13,18 20,0"/></svg></div>
-    <div class="lightning-para" style="top:3%;left:30%;"><svg viewBox="0 0 24 40" width="24" height="38"><polygon points="14,0 6,16 12,16 4,40 20,18 13,18 20,0"/></svg></div>
-    <div class="lightning-para" style="top:8%;right:28%;"><svg viewBox="0 0 24 40" width="28" height="44"><polygon points="14,0 6,16 12,16 4,40 20,18 13,18 20,0"/></svg></div>
-    <div class="lightning-para" style="bottom:20%;left:5%;"><svg viewBox="0 0 24 40" width="32" height="50"><polygon points="14,0 6,16 12,16 4,40 20,18 13,18 20,0"/></svg></div>
-    <div class="lightning-para" style="bottom:15%;right:7%;"><svg viewBox="0 0 24 40" width="26" height="42"><polygon points="14,0 6,16 12,16 4,40 20,18 13,18 20,0"/></svg></div>
-    <div class="lightning-para" style="top:45%;left:2%;"><svg viewBox="0 0 24 40" width="20" height="32"><polygon points="14,0 6,16 12,16 4,40 20,18 13,18 20,0"/></svg></div>
-    <div class="lightning-para" style="top:40%;right:3%;"><svg viewBox="0 0 24 40" width="22" height="36"><polygon points="14,0 6,16 12,16 4,40 20,18 13,18 20,0"/></svg></div>
+    <div class="lightning-para" style="top:6%;left:8%;"><div class="lightning-float"><svg viewBox="0 0 24 40" width="36" height="58"><polygon points="14,0 6,16 12,16 4,40 20,18 13,18 20,0"/></svg></div>
+    <div class="lightning-para" style="top:10%;right:10%;"><div class="lightning-float"><svg viewBox="0 0 24 40" width="30" height="48"><polygon points="14,0 6,16 12,16 4,40 20,18 13,18 20,0"/></svg></div>
+    <div class="lightning-para" style="top:3%;left:30%;"><div class="lightning-float"><svg viewBox="0 0 24 40" width="24" height="38"><polygon points="14,0 6,16 12,16 4,40 20,18 13,18 20,0"/></svg></div>
+    <div class="lightning-para" style="top:8%;right:28%;"><div class="lightning-float"><svg viewBox="0 0 24 40" width="28" height="44"><polygon points="14,0 6,16 12,16 4,40 20,18 13,18 20,0"/></svg></div>
+    <div class="lightning-para" style="bottom:20%;left:5%;"><div class="lightning-float"><svg viewBox="0 0 24 40" width="32" height="50"><polygon points="14,0 6,16 12,16 4,40 20,18 13,18 20,0"/></svg></div>
+    <div class="lightning-para" style="bottom:15%;right:7%;"><div class="lightning-float"><svg viewBox="0 0 24 40" width="26" height="42"><polygon points="14,0 6,16 12,16 4,40 20,18 13,18 20,0"/></svg></div>
+    <div class="lightning-para" style="top:45%;left:2%;"><div class="lightning-float"><svg viewBox="0 0 24 40" width="20" height="32"><polygon points="14,0 6,16 12,16 4,40 20,18 13,18 20,0"/></svg></div>
+    <div class="lightning-para" style="top:40%;right:3%;"><div class="lightning-float"><svg viewBox="0 0 24 40" width="22" height="36"><polygon points="14,0 6,16 12,16 4,40 20,18 13,18 20,0"/></svg></div>
 
     <img src="assets/billboard.png" alt="MILLI Billboard" class="billboard-img" id="bb" draggable="false" />
     <div class="logo-stack">
@@ -119,9 +120,9 @@
       <p class="logo-subtitle">ASIA TOUR 2026</p>
     </div>
     <div class="city-grid" id="city-grid">
-      <div class="city-col"><span class="city-name" data-city="HONG KONG">TAIWAN</span><span class="city-name" data-city="HONG KONG">HONG KONG</span><span class="city-name" data-city="SINGAPORE">SINGAPORE</span></div>
+      <div class="city-col"><span class="city-name" data-city="TAIPEI">TAIWAN</span><span class="city-name" data-city="HONG KONG">HONG KONG</span><span class="city-name" data-city="SINGAPORE">SINGAPORE</span></div>
       <div class="city-col"><span class="city-name" data-city="KUALA LUMPUR">MALAYSIA</span><span class="city-name" data-city="MANILA / JAKARTA / TOKYO / BEIJING">JAPAN</span><span class="city-name" data-city="MANILA / JAKARTA / TOKYO / BEIJING">PHILIPPINES</span><span class="city-name" data-city="MANILA / JAKARTA / TOKYO / BEIJING">INDONESIA</span></div>
-      <div class="city-col"><span class="city-name" data-city="MANILA / JAKARTA / TOKYO / BEIJING">CHINA</span><span class="city-name" data-city="BANGKOK">THAILAND</span><span class="city-name" data-city="BANGKOK">SOUTH KOREA</span></div>
+      <div class="city-col"><span class="city-name" data-city="MANILA / JAKARTA / TOKYO / BEIJING">CHINA</span><span class="city-name" data-city="BANGKOK">THAILAND</span><span class="city-name" data-city="">SOUTH KOREA</span></div>
     </div>
     <p class="tour-period">JUNE — OCTOBER</p>
     <img src="assets/logo.png" alt="YUPP!" class="hero-yupp" />
@@ -159,10 +160,12 @@
     });
 
     /* Lightning parallax on scroll — each bolt moves at different speed */
+    /* Scroll parallax on outer .lightning-para, float on inner .lightning-float */
     document.querySelectorAll('.lightning-para').forEach(function(el,i){
       var speed=50+(i*30);
       gsap.to(el,{y:speed,ease:'none',scrollTrigger:{trigger:'body',start:'top top',end:'bottom bottom',scrub:true}});
-      /* Subtle float animation */
+    });
+    document.querySelectorAll('.lightning-float').forEach(function(el,i){
       gsap.to(el,{y:'+=6',duration:2+i*0.4,repeat:-1,yoyo:true,ease:'sine.inOut'});
     });
 
@@ -178,12 +181,19 @@
         var target=el.dataset.city;
         var rows=document.querySelectorAll('.date-row');
         rows.forEach(function(r){r.classList.remove('highlight');});
+        if(!target){
+          document.getElementById('tour-dates').scrollIntoView({behavior:'smooth',block:'start'});
+          return;
+        }
+        var found=false;
         rows.forEach(function(r){
-          if(r.querySelector('.d-city').textContent.indexOf(target)>=0||r.querySelector('.d-city').textContent.indexOf(el.dataset.t)>=0){
+          var city=r.querySelector('.d-city').textContent;
+          if(city.indexOf(target)>=0){
             r.classList.add('highlight');
-            r.scrollIntoView({behavior:'smooth',block:'center'});
+            if(!found){r.scrollIntoView({behavior:'smooth',block:'center'});found=true;}
           }
         });
+        if(!found)document.getElementById('tour-dates').scrollIntoView({behavior:'smooth',block:'start'});
       });
     });
 

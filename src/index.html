@@ -80,6 +80,7 @@
 
     /* WAVE BG — SVG container for mouse-interactive waves */
     .wave-wrap{position:relative;overflow:hidden;background:var(--red);}
+    .wave-svg-global{position:fixed;inset:0;z-index:0;pointer-events:none;}
     .wave-svg{position:absolute;inset:0;z-index:0;pointer-events:none;}
     .wave-content{position:relative;z-index:1;padding:3rem 1.5rem 4rem;}
 
@@ -116,6 +117,9 @@
   </style>
 </head>
 <body>
+
+  <!-- Global wave lines — covers entire page -->
+  <svg class="wave-svg-global" id="wave-global" xmlns="http://www.w3.org/2000/svg"></svg>
 
   <section class="hero" id="hero">
     <!-- Lightning 3D layers -->
@@ -232,7 +236,7 @@
 
     /* ─── WAVE BACKGROUND (from 21st.dev/wave-background) ─── */
     (function(){
-      var wrap=document.getElementById('wave-wrap'),svg=document.getElementById('wave-svg');
+      var wrap=document.body,svg=document.getElementById('wave-global');
       if(!wrap||!svg)return;
       var noise2D=createNoise2D();
       var paths=[],lines=[];

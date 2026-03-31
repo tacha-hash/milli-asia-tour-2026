@@ -4,158 +4,125 @@
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
   <title>MILLI — JAA EHH! ASIA TOUR 2026</title>
-  <meta name="theme-color" content="#DA2D40" />
-  <link rel="preconnect" href="https://fonts.googleapis.com" />
-  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+  <meta name="theme-color" content="#FF0006" />
   <link href="https://fonts.googleapis.com/css2?family=Bebas+Neue&family=Barlow+Condensed:wght@400;600;700;800&display=swap" rel="stylesheet" />
   <script src="https://cdnjs.cloudflare.com/ajax/libs/gsap/3.12.5/gsap.min.js"></script>
   <script src="https://cdnjs.cloudflare.com/ajax/libs/gsap/3.12.5/ScrollTrigger.min.js"></script>
   <style>
     @font-face{font-family:'Kuunari';src:url('fonts/kuunari-black-condensed.otf') format('opentype');font-display:swap;}
     @font-face{font-family:'Gotham';src:url('fonts/Gotham-Bold.otf') format('opentype');font-display:swap;}
-
     *{margin:0;padding:0;box-sizing:border-box;}
-    :root{--red:#DA2D40;--black:#0A0A0A;--white:#FAFAFA;}
+    :root{--red:#FF0006;--black:#0A0A0A;--white:#FAFAFA;}
     html{scroll-behavior:smooth;}
     body{background:var(--red);color:var(--black);font-family:'Barlow Condensed','Gotham',sans-serif;overflow-x:hidden;-webkit-font-smoothing:antialiased;}
 
-    /* ===== HERO: KV poster เต็มจอ ===== */
-    .hero{position:relative;width:100%;background:var(--red);}
-    .hero-poster{display:block;width:100%;height:auto;}
-
-    /* Interactive overlay on poster — city names that scramble on hover */
-    .city-overlay{position:absolute;cursor:default;font-family:'Barlow Condensed','Gotham',sans-serif;font-weight:800;text-transform:uppercase;letter-spacing:0.15em;color:transparent;transition:color 0.2s;}
-    .city-overlay:hover{color:var(--white);text-shadow:0 0 20px rgba(255,255,255,0.5);}
-
-    /* Scroll hint */
+    /* HERO */
+    .hero{min-height:100vh;display:flex;flex-direction:column;align-items:center;justify-content:center;padding:2rem 1rem;position:relative;}
+    .billboard-img{width:85vw;max-width:700px;height:auto;filter:drop-shadow(0 16px 50px rgba(0,0,0,0.35));will-change:transform;display:block;margin:0 auto;}
+    .logo-stack{text-align:center;margin-top:0.8rem;}
+    .logo-milli{font-family:'Kuunari','Bebas Neue',sans-serif;font-size:clamp(14px,2.5vw,20px);letter-spacing:0.35em;text-transform:uppercase;display:block;}
+    .speech-bubble{display:inline-block;background:var(--black);position:relative;padding:0.15em 0.5em;margin:0.3rem 0;}
+    .speech-bubble h1{font-family:'Kuunari','Bebas Neue',sans-serif;font-size:clamp(40px,10vw,80px);color:var(--red);letter-spacing:0.02em;line-height:1;}
+    .speech-bubble::after{content:'';position:absolute;bottom:-10px;left:50%;transform:translateX(-50%);border-left:12px solid transparent;border-right:12px solid transparent;border-top:12px solid var(--black);}
+    .logo-subtitle{font-family:'Bebas Neue','Kuunari',sans-serif;font-size:clamp(16px,3.5vw,28px);letter-spacing:0.18em;margin-top:0.6rem;}
+    .city-grid{display:grid;grid-template-columns:repeat(3,1fr);gap:0.2rem 1.5rem;text-align:center;margin:1.5rem auto;max-width:500px;padding:0 1rem;}
+    .city-col{display:flex;flex-direction:column;gap:0.15rem;}
+    .city-name{font-weight:800;font-size:clamp(8px,1.6vw,13px);letter-spacing:0.18em;text-transform:uppercase;cursor:default;transition:color 0.2s;}
+    .city-name:hover{color:var(--white);text-shadow:0 0 10px rgba(255,255,255,0.4);}
+    .tour-period{font-family:'Bebas Neue',sans-serif;font-size:clamp(14px,2.5vw,20px);letter-spacing:0.3em;text-align:center;margin-top:1rem;}
+    .hero-yupp{display:block;margin:1rem auto 0;height:20px;}
     .scroll-hint{text-align:center;padding:1.5rem 0;opacity:0.5;}
-    .scroll-hint span{font-size:11px;font-weight:700;letter-spacing:0.3em;text-transform:uppercase;color:var(--black);}
+    .scroll-hint span{font-size:11px;font-weight:700;letter-spacing:0.3em;text-transform:uppercase;}
     .scroll-arrow{width:14px;height:14px;border-right:2px solid var(--black);border-bottom:2px solid var(--black);transform:rotate(45deg);margin:6px auto 0;animation:bounce 1.5s infinite;}
     @keyframes bounce{0%,100%{transform:rotate(45deg) translateY(0);}50%{transform:rotate(45deg) translateY(5px);}}
+    .lightning-divider{display:flex;justify-content:center;gap:1.5rem;padding:2rem 0;opacity:0.4;}
+    .lightning-divider svg{width:22px;height:34px;fill:var(--black);}
 
-    /* ===== TOUR DATES — ดำบนแดง ===== */
-    .tour-dates{padding:3rem 1.5rem 4rem;max-width:850px;margin:0 auto;}
-    .tour-dates h2{font-family:'Bebas Neue','Kuunari',sans-serif;font-size:clamp(32px,5vw,52px);letter-spacing:0.06em;text-align:center;margin-bottom:0.5rem;}
+    /* TOUR DATES */
+    .tour-dates{padding:2rem 1.5rem 4rem;max-width:850px;margin:0 auto;}
+    .tour-dates h2{font-family:'Bebas Neue',sans-serif;font-size:clamp(32px,5vw,52px);letter-spacing:0.06em;text-align:center;margin-bottom:0.5rem;}
     .tour-accent{width:32px;height:3px;background:var(--black);margin:0 auto 2rem;}
-
     .date-row{display:flex;justify-content:space-between;align-items:center;padding:0.9rem 0;border-bottom:1px solid rgba(0,0,0,0.18);cursor:pointer;transition:color 0.2s,padding-left 0.2s;}
     .date-row:hover{color:var(--white);padding-left:8px;}
-    .d-city{font-family:'Bebas Neue','Kuunari',sans-serif;font-size:clamp(18px,3vw,28px);letter-spacing:0.04em;}
+    .d-city{font-family:'Bebas Neue',sans-serif;font-size:clamp(18px,3vw,28px);letter-spacing:0.04em;}
     .d-date{font-weight:700;font-size:12px;letter-spacing:0.18em;text-transform:uppercase;opacity:0.5;}
     .d-badge{font-size:10px;font-weight:800;letter-spacing:0.15em;text-transform:uppercase;padding:3px 8px;border:1px solid rgba(0,0,0,0.25);white-space:nowrap;}
     .d-badge.show{border-color:var(--black);}
     .d-badge.homecoming{background:var(--black);color:var(--red);border-color:var(--black);}
     .d-badge.tbc{border-style:dashed;opacity:0.5;}
 
-    /* Lightning divider */
-    .lightning-divider{display:flex;justify-content:center;gap:2rem;padding:2rem 0;opacity:0.4;}
-    .lightning-divider svg{width:24px;height:36px;fill:var(--black);}
-
-    /* ===== MERCH — on red ===== */
+    /* MERCH */
     .merch-section{padding:2rem 1.5rem 4rem;text-align:center;}
-    .merch-section h2{font-family:'Bebas Neue','Kuunari',sans-serif;font-size:clamp(32px,5vw,52px);letter-spacing:0.06em;margin-bottom:1.5rem;}
+    .merch-section h2{font-family:'Bebas Neue',sans-serif;font-size:clamp(32px,5vw,52px);letter-spacing:0.06em;margin-bottom:1.5rem;}
     .merch-image{max-width:750px;width:100%;height:auto;filter:drop-shadow(0 12px 40px rgba(0,0,0,0.3));}
     .preorder-btn{display:inline-block;margin-top:2rem;padding:0.9rem 3rem;background:var(--black);color:var(--white);font-family:'Bebas Neue',sans-serif;font-size:20px;letter-spacing:0.18em;text-decoration:none;transition:all 0.3s;}
     .preorder-btn:hover{transform:scale(1.04);box-shadow:0 0 30px rgba(0,0,0,0.3);}
     .preorder-note{font-size:10px;letter-spacing:0.3em;opacity:0.4;margin-top:0.8rem;text-transform:uppercase;}
 
-    /* ===== FOOTER ===== */
+    /* FOOTER */
     .site-footer{padding:2rem;text-align:center;opacity:0.5;font-size:10px;letter-spacing:0.2em;text-transform:uppercase;}
     .site-footer img{height:16px;display:block;margin:0 auto 6px;}
 
-    /* Responsive */
     @media(max-width:768px){
+      .billboard-img{width:95vw;}
+      .city-grid{grid-template-columns:1fr;max-width:200px;gap:0.15rem;}
       .date-row{flex-direction:column;align-items:flex-start;gap:4px;}
-      .city-overlay{display:none;}
     }
   </style>
 </head>
 <body>
-
-  <!-- ===== HERO: KV poster เต็มจอ 1:1 ตาม artwork ===== -->
-  <section class="hero" id="hero">
-    <img src="assets/kv-main.jpg" alt="MILLI JAA-EHH! ASIA TOUR 2026" class="hero-poster" draggable="false" />
+  <section class="hero">
+    <img src="assets/billboard.png" alt="MILLI Billboard" class="billboard-img" id="bb" draggable="false" />
+    <div class="logo-stack">
+      <span class="logo-milli">milli</span>
+      <div class="speech-bubble"><h1>JAA EHH!</h1></div>
+      <p class="logo-subtitle">ASIA TOUR 2026</p>
+    </div>
+    <div class="city-grid">
+      <div class="city-col"><span class="city-name">TAIWAN</span><span class="city-name">HONG KONG</span><span class="city-name">SINGAPORE</span></div>
+      <div class="city-col"><span class="city-name">MALAYSIA</span><span class="city-name">JAPAN</span><span class="city-name">PHILIPPINES</span><span class="city-name">INDONESIA</span></div>
+      <div class="city-col"><span class="city-name">CHINA</span><span class="city-name">THAILAND</span><span class="city-name">SOUTH KOREA</span></div>
+    </div>
+    <p class="tour-period">JUNE — OCTOBER</p>
+    <img src="assets/logo.png" alt="YUPP!" class="hero-yupp" />
   </section>
 
-  <!-- Scroll hint -->
-  <div class="scroll-hint">
-    <span>Tour Dates</span>
-    <div class="scroll-arrow"></div>
-  </div>
+  <div class="scroll-hint"><span>Tour Dates</span><div class="scroll-arrow"></div></div>
 
-  <!-- Lightning divider -->
-  <div class="lightning-divider">
-    <svg viewBox="0 0 24 40"><polygon points="14,0 6,16 12,16 4,40 20,18 13,18 20,0"/></svg>
-    <svg viewBox="0 0 24 40"><polygon points="14,0 6,16 12,16 4,40 20,18 13,18 20,0"/></svg>
-    <svg viewBox="0 0 24 40"><polygon points="14,0 6,16 12,16 4,40 20,18 13,18 20,0"/></svg>
-  </div>
+  <div class="lightning-divider"><svg viewBox="0 0 24 40"><polygon points="14,0 6,16 12,16 4,40 20,18 13,18 20,0"/></svg><svg viewBox="0 0 24 40"><polygon points="14,0 6,16 12,16 4,40 20,18 13,18 20,0"/></svg><svg viewBox="0 0 24 40"><polygon points="14,0 6,16 12,16 4,40 20,18 13,18 20,0"/></svg></div>
 
-  <!-- ===== TOUR DATES ===== -->
-  <section class="tour-dates">
-    <h2>TOUR DATES</h2>
-    <div class="tour-accent"></div>
-    <div id="dates"></div>
-  </section>
+  <section class="tour-dates"><h2>TOUR DATES</h2><div class="tour-accent"></div><div id="dates"></div></section>
 
-  <!-- Lightning divider -->
-  <div class="lightning-divider">
-    <svg viewBox="0 0 24 40"><polygon points="14,0 6,16 12,16 4,40 20,18 13,18 20,0"/></svg>
-    <svg viewBox="0 0 24 40"><polygon points="14,0 6,16 12,16 4,40 20,18 13,18 20,0"/></svg>
-    <svg viewBox="0 0 24 40"><polygon points="14,0 6,16 12,16 4,40 20,18 13,18 20,0"/></svg>
-  </div>
+  <div class="lightning-divider"><svg viewBox="0 0 24 40"><polygon points="14,0 6,16 12,16 4,40 20,18 13,18 20,0"/></svg><svg viewBox="0 0 24 40"><polygon points="14,0 6,16 12,16 4,40 20,18 13,18 20,0"/></svg><svg viewBox="0 0 24 40"><polygon points="14,0 6,16 12,16 4,40 20,18 13,18 20,0"/></svg></div>
 
-  <!-- ===== MERCH ===== -->
-  <section class="merch-section">
-    <h2>MERCHANDISE</h2>
-    <img src="assets/ci-merch.png" alt="Tour Tee — Front & Back" class="merch-image" draggable="false" />
-    <br />
-    <a href="#" class="preorder-btn">PRE-ORDER</a>
-    <p class="preorder-note">Limited Edition — Ships June 2026</p>
-  </section>
+  <section class="merch-section"><h2>MERCHANDISE</h2><img src="assets/ci-merch.png" alt="Tour Tee" class="merch-image" draggable="false" /><br /><a href="#" class="preorder-btn">PRE-ORDER</a><p class="preorder-note">Limited Edition — Ships June 2026</p></section>
 
-  <!-- ===== FOOTER ===== -->
-  <footer class="site-footer">
-    <img src="assets/logo.png" alt="YUPP!" />
-    <span>&copy; 2026 YUPP! Entertainment</span>
-  </footer>
+  <footer class="site-footer"><img src="assets/logo.png" alt="YUPP!" /><span>&copy; 2026 YUPP! Entertainment</span></footer>
 
   <script>
-    var TOUR=[
-      {date:'26 JUN',city:'HONG KONG',badge:'show'},
-      {date:'28 JUN',city:'TAIPEI',badge:'show'},
-      {date:'03 JUL',city:'HONG KONG',badge:''},
-      {date:'10 JUL',city:'SINGAPORE',badge:'show'},
-      {date:'11 JUL',city:'KUALA LUMPUR',badge:'show'},
-      {date:'JUL—SEP',city:'MANILA / JAKARTA / TOKYO / BEIJING',badge:'tbc'},
-      {date:'03 OCT',city:'BANGKOK',badge:'homecoming'}
-    ];
+    var TOUR=[{date:'26 JUN',city:'HONG KONG',badge:'show'},{date:'28 JUN',city:'TAIPEI',badge:'show'},{date:'03 JUL',city:'HONG KONG',badge:''},{date:'10 JUL',city:'SINGAPORE',badge:'show'},{date:'11 JUL',city:'KUALA LUMPUR',badge:'show'},{date:'JUL—SEP',city:'MANILA / JAKARTA / TOKYO / BEIJING',badge:'tbc'},{date:'03 OCT',city:'BANGKOK',badge:'homecoming'}];
 
-    function scramble(el,text){
-      if(!el||!gsap)return;
-      var chars='ABCDEFGHIJKLMNOPQRSTUVWXYZ!@#%';
-      var s={f:0};
-      gsap.killTweensOf(s);
-      gsap.to(s,{f:text.length*2,duration:0.4,ease:'power4.out',
-        onUpdate:function(){var r=Math.floor(s.f/2);el.textContent=text.split('').map(function(c,i){return' /—'.indexOf(c)>=0?c:i<r?text[i]:chars[Math.floor(Math.random()*chars.length)];}).join('');},
-        onComplete:function(){el.textContent=text;}
-      });
-    }
+    function scramble(el,text){if(!el||!gsap)return;var chars='ABCDEFGHIJKLMNOPQRSTUVWXYZ!@#%',s={f:0};gsap.killTweensOf(s);gsap.to(s,{f:text.length*2,duration:0.4,ease:'power4.out',onUpdate:function(){var r=Math.floor(s.f/2);el.textContent=text.split('').map(function(c,i){return' /—'.indexOf(c)>=0?c:i<r?text[i]:chars[Math.floor(Math.random()*chars.length)]}).join('')},onComplete:function(){el.textContent=text}});}
 
     gsap.registerPlugin(ScrollTrigger);
 
-    /* Tour dates render */
-    var datesEl=document.getElementById('dates');
-    TOUR.forEach(function(d,i){
-      var row=document.createElement('div');
-      row.className='date-row';
-      row.innerHTML='<span class="d-city">'+d.city+'</span><span class="d-date">'+d.date+'</span><span class="d-badge '+d.badge+'">'+(d.badge?d.badge.toUpperCase():'OPTION')+'</span>';
-      var rowCity=row.querySelector('.d-city');
-      row.addEventListener('mouseenter',function(){scramble(rowCity,d.city);});
-      datesEl.appendChild(row);
-      gsap.fromTo(row,{opacity:0,x:-20},{opacity:1,x:0,duration:0.4,delay:i*0.05,scrollTrigger:{trigger:row,start:'top 90%'}});
-    });
+    /* Billboard parallax */
+    window.addEventListener('pointermove',function(e){var x=(e.clientX/innerWidth-0.5)*12,y=(e.clientY/innerHeight-0.5)*8;gsap.to('#bb',{x:x,y:y,duration:1,ease:'power3.out'});});
 
-    /* Merch reveal */
+    /* City auto-scramble */
+    var allCities=document.querySelectorAll('.city-name'),ci=0;
+    function nextCity(){var el=allCities[ci%allCities.length];if(!el.dataset.t)el.dataset.t=el.textContent;scramble(el,el.dataset.t);ci++;}
+    nextCity();setInterval(nextCity,800);
+    allCities.forEach(function(el){el.addEventListener('mouseenter',function(){scramble(el,el.dataset.t||el.textContent)});});
+
+    /* Logo entrance */
+    gsap.from('.logo-stack',{opacity:0,y:20,duration:0.8,delay:0.3});
+    gsap.from('.city-grid',{opacity:0,y:15,duration:0.6,delay:0.5});
+
+    /* Tour dates */
+    var d=document.getElementById('dates');
+    TOUR.forEach(function(t,i){var r=document.createElement('div');r.className='date-row';r.innerHTML='<span class="d-city">'+t.city+'</span><span class="d-date">'+t.date+'</span><span class="d-badge '+t.badge+'">'+(t.badge?t.badge.toUpperCase():'OPTION')+'</span>';var rc=r.querySelector('.d-city');r.addEventListener('mouseenter',function(){scramble(rc,t.city)});d.appendChild(r);gsap.fromTo(r,{opacity:0,x:-20},{opacity:1,x:0,duration:0.4,delay:i*0.05,scrollTrigger:{trigger:r,start:'top 90%'}});});
+
     gsap.fromTo('.merch-image',{opacity:0,y:40},{opacity:1,y:0,duration:0.8,scrollTrigger:{trigger:'.merch-section',start:'top 80%'}});
   </script>
 </body>

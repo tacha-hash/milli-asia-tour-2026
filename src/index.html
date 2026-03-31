@@ -176,50 +176,14 @@
       <section class="tour-dates" id="tour-dates"><h2>TOUR DATES</h2><div id="dates"></div></section>
       <section class="merch-section" id="merch">
         <h2>MERCHANDISE</h2>
-        <p class="merch-sub2">Official Tour Collection</p>
-        <div class="merch-grid2">
-          <!-- Front tee — hover flip to back -->
-          <div class="merch-card" id="merch-front">
-            <div class="merch-card-inner" style="aspect-ratio:3/4;">
-              <div class="merch-face">
-                <div style="flex:1;display:flex;align-items:center;justify-content:center;padding:2rem;">
-                  <div style="width:65%;max-width:180px;background:#1C1C1C;padding:50px 16px 24px;clip-path:polygon(15% 0,0% 15%,0% 100%,100% 100%,100% 15%,85% 0,62% 8%,50% 10%,38% 8%);text-align:center;">
-                    <div style="background:var(--red);display:inline-block;padding:3px 12px;margin-top:8px;"><span style="font-family:'Bebas Neue',sans-serif;font-size:11px;letter-spacing:0.12em;color:#fff;">JAA EHH!</span></div>
-                    <div style="height:70px;"></div>
-                  </div>
-                </div>
-                <div class="label"><span>Tour Tee — Front</span><span class="price">&#3647;1,490</span></div>
-              </div>
-              <div class="merch-face back">
-                <div style="flex:1;display:flex;align-items:center;justify-content:center;padding:2rem;">
-                  <div style="width:65%;max-width:180px;background:#1C1C1C;padding:16px 12px 16px;clip-path:polygon(15% 0,0% 15%,0% 100%,100% 100%,100% 15%,85% 0,62% 5%,50% 6%,38% 5%);text-align:center;overflow:hidden;">
-                    <img src="assets/kv-main.jpg" alt="KV" style="width:85%;margin:0 auto 4px;display:block;border-radius:2px;" />
-                    <div style="font-size:5px;letter-spacing:0.15em;color:rgba(255,255,255,0.5);line-height:1.6;" id="back-cities"></div>
-                  </div>
-                </div>
-                <div class="label"><span>Tour Tee — Back</span><span class="price">&#3647;1,490</span></div>
-              </div>
-            </div>
-          </div>
-          <!-- Full merch mockup from CI Deck -->
-          <div class="merch-card">
-            <div class="merch-card-inner" style="aspect-ratio:3/4;">
-              <div class="merch-face">
-                <img src="assets/ci-merch.png" alt="Official Merch" style="object-fit:contain;padding:1rem;flex:1;" />
-                <div class="label"><span>Full Collection</span><span class="price">&#3647;1,490</span></div>
-              </div>
-            </div>
-          </div>
-        </div>
-        <p class="merch-hint">Hover to flip</p>
-        <a href="#" class="preorder-btn">PRE-ORDER NOW</a>
+        <p class="merch-sub2">Coming Soon</p>
       </section>
     </div>
   </div>
 
   <footer class="site-footer"><img src="assets/logo.png" alt="YUPP!" /><span>&copy; 2026 YUPP! Entertainment</span></footer>
 
-  <audio id="audio" src="assets/jaaehh.mp3" preload="auto" loop autoplay muted></audio>
+  <audio id="audio" src="assets/jaaehh.mp3" preload="auto" loop></audio>
   <button class="audio-btn" id="audio-btn" title="Play/Pause">
     <svg id="play-ico" width="12" height="12" viewBox="0 0 24 24" fill="currentColor"><polygon points="6,3 20,12 6,21"/></svg>
     <svg id="pause-ico" width="12" height="12" viewBox="0 0 24 24" fill="currentColor" style="display:none"><rect x="5" y="3" width="5" height="18"/><rect x="14" y="3" width="5" height="18"/></svg>
@@ -285,14 +249,8 @@
       gsap.fromTo(r,{opacity:0,x:-20},{opacity:1,x:0,duration:0.4,delay:i*0.05,scrollTrigger:{trigger:r,start:'top 90%'}});
     });
 
-    /* Merch back cities */
-    var bc=document.getElementById('back-cities');
-    if(bc)['TAIWAN','HONG KONG','SINGAPORE','MALAYSIA','JAPAN','PHILIPPINES','INDONESIA','CHINA','THAILAND','SOUTH KOREA'].forEach(function(c){var d=document.createElement('div');d.textContent=c;bc.appendChild(d);});
-
-    /* Merch cards reveal */
-    document.querySelectorAll('.merch-card').forEach(function(c,i){
-      gsap.fromTo(c,{opacity:0,y:60},{opacity:1,y:0,duration:0.8,delay:i*0.2,scrollTrigger:{trigger:c,start:'top 85%'}});
-    });
+    /* Merch reveal */
+    gsap.fromTo('.merch-section',{opacity:0,y:40},{opacity:1,y:0,duration:0.8,scrollTrigger:{trigger:'.merch-section',start:'top 80%'}});
 
     /* ─── WAVE BACKGROUND (from 21st.dev/wave-background) ─── */
     (function(){
@@ -360,13 +318,22 @@
     function playA(){audio.volume=0.3;audio.play().then(function(){abtn.classList.add('playing');pI.style.display='none';paI.style.display='block';}).catch(function(){});}
     function pauseA(){audio.pause();abtn.classList.remove('playing');pI.style.display='block';paI.style.display='none';}
     abtn.addEventListener('click',function(){audio.paused?playA():pauseA();});
-    /* Autoplay: start muted (browser allows), unmute on first interaction */
-    audio.play().catch(function(){});
-    abtn.classList.add('playing');pI.style.display='none';paI.style.display='block';
-    function unmute(){audio.muted=false;audio.volume=0.3;}
-    ['click','scroll','keydown','touchstart','mousemove'].forEach(function(evt){
-      document.addEventListener(evt,function f(){unmute();document.removeEventListener(evt,f);},{once:true});
-    });
+    /* Audio: try play unmuted, if blocked → show click-to-play overlay */
+    audio.muted=false;audio.volume=0.3;
+    var tryPlay=audio.play();
+    if(tryPlay){tryPlay.then(function(){
+      abtn.classList.add('playing');pI.style.display='none';paI.style.display='block';
+    }).catch(function(){
+      /* Browser blocked — show overlay prompt */
+      var ov=document.createElement('div');
+      ov.style.cssText='position:fixed;inset:0;z-index:999;background:rgba(0,0,0,0.7);display:flex;align-items:center;justify-content:center;cursor:pointer;';
+      ov.innerHTML='<div style="text-align:center;color:#fff;"><div style="font-family:Bebas Neue,sans-serif;font-size:clamp(32px,8vw,64px);letter-spacing:0.1em;">MILLI — JAA EHH!</div><div style="font-size:14px;letter-spacing:0.3em;margin-top:12px;opacity:0.6;">TAP TO ENTER</div></div>';
+      document.body.appendChild(ov);
+      ov.addEventListener('click',function(){
+        audio.play();abtn.classList.add('playing');pI.style.display='none';paI.style.display='block';
+        ov.remove();
+      });
+    });}
   </script>
 </body>
 </html>

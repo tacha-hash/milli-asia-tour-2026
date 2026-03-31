@@ -136,7 +136,7 @@
 
   <footer class="site-footer"><img src="assets/logo.png" alt="YUPP!" /><span>&copy; 2026 YUPP! Entertainment</span></footer>
 
-  <audio id="audio" src="assets/jaaehh.mp3" preload="auto" loop></audio>
+  <audio id="audio" src="assets/jaaehh.mp3" preload="auto" loop autoplay></audio>
   <button class="audio-btn" id="audio-btn" title="Play/Pause">
     <svg id="play-ico" width="12" height="12" viewBox="0 0 24 24" fill="currentColor"><polygon points="6,3 20,12 6,21"/></svg>
     <svg id="pause-ico" width="12" height="12" viewBox="0 0 24 24" fill="currentColor" style="display:none"><rect x="5" y="3" width="5" height="18"/><rect x="14" y="3" width="5" height="18"/></svg>
@@ -272,8 +272,12 @@
     function playA(){audio.volume=0.3;audio.play().then(function(){abtn.classList.add('playing');pI.style.display='none';paI.style.display='block';}).catch(function(){});}
     function pauseA(){audio.pause();abtn.classList.remove('playing');pI.style.display='block';paI.style.display='none';}
     abtn.addEventListener('click',function(){audio.paused?playA():pauseA();});
-    document.addEventListener('click',function f(){playA();document.removeEventListener('click',f);},{once:true});
-    document.addEventListener('scroll',function f(){playA();document.removeEventListener('scroll',f);},{once:true});
+    /* Try autoplay immediately on load */
+    playA();
+    /* Fallback: browser blocks autoplay without interaction → play on first click/scroll/key */
+    ['click','scroll','keydown','touchstart'].forEach(function(evt){
+      document.addEventListener(evt,function f(){playA();document.removeEventListener(evt,f);},{once:true});
+    });
   </script>
 </body>
 </html>

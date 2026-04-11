@@ -119,6 +119,24 @@
     .preorder-btn:hover{transform:scale(1.06);box-shadow:0 0 40px rgba(255,0,6,0.5),0 0 80px rgba(255,0,6,0.2);}
     @media(max-width:768px){.merch-grid2{grid-template-columns:1fr;max-width:320px;}}
 
+    /* 3D MERCH CAROUSEL — CSS 3D ring, auto-spin, drag to rotate */
+    .merch-3d-stage{position:relative;z-index:1;width:100%;max-width:720px;margin:1rem auto 0;height:clamp(320px,52vw,520px);perspective:1400px;perspective-origin:50% 45%;cursor:grab;user-select:none;touch-action:pan-y;}
+    .merch-3d-stage.dragging{cursor:grabbing;}
+    .merch-3d-ring{position:absolute;inset:0;transform-style:preserve-3d;transform:rotateY(0deg);will-change:transform;}
+    .merch-3d-face{position:absolute;left:50%;top:50%;width:clamp(200px,34vw,320px);height:clamp(260px,44vw,420px);margin-left:calc(clamp(200px,34vw,320px) / -2);margin-top:calc(clamp(260px,44vw,420px) / -2);transform-style:preserve-3d;backface-visibility:visible;}
+    .merch-3d-card{position:absolute;inset:0;border-radius:14px;overflow:hidden;background:var(--black);box-shadow:0 30px 80px rgba(0,0,0,0.6),0 0 0 1px rgba(255,255,255,0.06) inset;display:flex;flex-direction:column;transition:box-shadow 0.4s;}
+    .merch-3d-card::after{content:'';position:absolute;inset:0;background:linear-gradient(180deg,rgba(0,0,0,0) 45%,rgba(0,0,0,0.85) 100%);pointer-events:none;}
+    .merch-3d-card img{flex:1;width:100%;height:100%;object-fit:cover;object-position:center;display:block;}
+    .merch-3d-meta{position:absolute;left:0;right:0;bottom:0;padding:14px 18px;display:flex;justify-content:space-between;align-items:flex-end;z-index:2;color:var(--white);}
+    .merch-3d-meta .name{font-family:'Bebas Neue',sans-serif;font-size:clamp(16px,2.2vw,22px);letter-spacing:0.08em;line-height:1;}
+    .merch-3d-meta .price{font-family:'Bebas Neue',sans-serif;font-size:clamp(18px,2.4vw,26px);color:var(--red);letter-spacing:0.05em;}
+    .merch-3d-tag{position:absolute;top:12px;left:12px;z-index:2;font-size:9px;font-weight:800;letter-spacing:0.25em;text-transform:uppercase;padding:4px 8px;background:var(--red);color:var(--white);border-radius:2px;}
+    .merch-3d-dots{display:flex;justify-content:center;gap:10px;margin-top:1.25rem;position:relative;z-index:1;}
+    .merch-3d-dot{width:8px;height:8px;border-radius:50%;background:rgba(255,255,255,0.25);cursor:pointer;transition:all 0.3s;border:0;padding:0;}
+    .merch-3d-dot.active{background:var(--red);box-shadow:0 0 12px rgba(255,0,6,0.6);transform:scale(1.3);}
+    .merch-3d-hint{font-size:9px;letter-spacing:0.3em;text-transform:uppercase;opacity:0.35;margin-top:0.6rem;position:relative;z-index:1;color:var(--white);}
+    @media(max-width:768px){.merch-3d-stage{perspective:900px;}}
+
     /* FOOTER */
     .site-footer{padding:2rem;text-align:center;opacity:0.5;font-size:10px;letter-spacing:0.2em;text-transform:uppercase;}
     .site-footer img{height:16px;display:block;margin:0 auto 6px;}
@@ -176,7 +194,34 @@
       <section class="tour-dates" id="tour-dates"><h2>TOUR DATES</h2><div id="dates"></div></section>
       <section class="merch-section" id="merch">
         <h2>MERCHANDISE</h2>
-        <p class="merch-sub2">Coming Soon</p>
+        <p class="merch-sub2">Preview / Drop Soon</p>
+        <div class="merch-3d-stage" id="merch3d">
+          <div class="merch-3d-ring" id="merch3dRing">
+            <div class="merch-3d-face" data-idx="0">
+              <div class="merch-3d-card">
+                <span class="merch-3d-tag">Tee</span>
+                <img src="assets/merch-7.png" alt="MILLI Jaa Ehh Tee" draggable="false" />
+                <div class="merch-3d-meta"><span class="name">Jaa Ehh Tee</span><span class="price">฿990</span></div>
+              </div>
+            </div>
+            <div class="merch-3d-face" data-idx="1">
+              <div class="merch-3d-card">
+                <span class="merch-3d-tag">CI</span>
+                <img src="assets/ci-merch.png" alt="MILLI CI Merch" draggable="false" />
+                <div class="merch-3d-meta"><span class="name">CI Capsule</span><span class="price">฿1,490</span></div>
+              </div>
+            </div>
+            <div class="merch-3d-face" data-idx="2">
+              <div class="merch-3d-card">
+                <span class="merch-3d-tag">Set</span>
+                <img src="assets/merch-page.png" alt="MILLI Merch Set" draggable="false" />
+                <div class="merch-3d-meta"><span class="name">Tour Set</span><span class="price">฿2,290</span></div>
+              </div>
+            </div>
+          </div>
+        </div>
+        <div class="merch-3d-dots" id="merch3dDots"></div>
+        <p class="merch-3d-hint">Drag · Click dots · Auto-spin</p>
       </section>
     </div>
   </div>
@@ -251,6 +296,60 @@
 
     /* Merch reveal */
     gsap.fromTo('.merch-section',{opacity:0,y:40},{opacity:1,y:0,duration:0.8,scrollTrigger:{trigger:'.merch-section',start:'top 80%'}});
+
+    /* ─── 3D MERCH CAROUSEL ─── */
+    (function(){
+      var stage=document.getElementById('merch3d');
+      var ring=document.getElementById('merch3dRing');
+      var dotsWrap=document.getElementById('merch3dDots');
+      if(!stage||!ring||!dotsWrap)return;
+      var faces=ring.querySelectorAll('.merch-3d-face');
+      var N=faces.length;if(!N)return;
+      var anglePer=360/N;
+      function faceWidth(){return faces[0].getBoundingClientRect().width||260;}
+      var radius=faceWidth()*1.25;
+      function layout(){
+        radius=faceWidth()*1.25;
+        faces.forEach(function(f,i){f.style.transform='rotateY('+(i*anglePer)+'deg) translateZ('+radius+'px)';});
+      }
+      layout();
+      window.addEventListener('resize',layout);
+
+      var current=0,rotation=0,target=0,autoT=null,paused=false;
+      function setTargetToIndex(i){current=((i%N)+N)%N;target=-current*anglePer;updateDots();}
+      function applyRotation(){rotation+=(target-rotation)*0.12;ring.style.transform='rotateY('+rotation+'deg)';requestAnimationFrame(applyRotation);}
+      applyRotation();
+
+      function makeDots(){
+        for(var i=0;i<N;i++){
+          var b=document.createElement('button');b.className='merch-3d-dot';b.type='button';b.dataset.idx=i;
+          b.addEventListener('click',(function(idx){return function(){setTargetToIndex(idx);bumpAuto();}})(i));
+          dotsWrap.appendChild(b);
+        }
+      }
+      function updateDots(){dotsWrap.querySelectorAll('.merch-3d-dot').forEach(function(d,i){d.classList.toggle('active',i===current);});}
+      makeDots();updateDots();
+
+      /* Auto-spin (only when merch section visible + not interacting) */
+      var inView=false;
+      var io=new IntersectionObserver(function(entries){entries.forEach(function(e){inView=e.isIntersecting;});},{threshold:0.35});
+      io.observe(stage);
+      function startAuto(){if(autoT)return;autoT=setInterval(function(){if(paused||!inView)return;setTargetToIndex(current+1);},3200);}
+      function bumpAuto(){paused=true;clearTimeout(bumpAuto._t);bumpAuto._t=setTimeout(function(){paused=false;},4500);}
+      startAuto();
+
+      /* Drag / swipe */
+      var dragging=false,startX=0,startRot=0;
+      function pointerDown(e){dragging=true;stage.classList.add('dragging');startX=(e.touches?e.touches[0].clientX:e.clientX);startRot=target;paused=true;}
+      function pointerMove(e){if(!dragging)return;var x=(e.touches?e.touches[0].clientX:e.clientX);var dx=x-startX;target=startRot+dx*0.35;}
+      function pointerUp(){if(!dragging)return;dragging=false;stage.classList.remove('dragging');var idx=Math.round(-target/anglePer);setTargetToIndex(idx);bumpAuto();}
+      stage.addEventListener('mousedown',pointerDown);
+      window.addEventListener('mousemove',pointerMove);
+      window.addEventListener('mouseup',pointerUp);
+      stage.addEventListener('touchstart',pointerDown,{passive:true});
+      stage.addEventListener('touchmove',pointerMove,{passive:true});
+      stage.addEventListener('touchend',pointerUp);
+    })();
 
     /* ─── WAVE BACKGROUND (from 21st.dev/wave-background) ─── */
     (function(){
